@@ -17,7 +17,6 @@ import GlobalModal from '@/ui/molecules/Modal/GlobalModal';
 import AppLayout from './Layout/AppLayout';
 import ChannelTalkFloating from './ChannelTalk/ChannelTalkFloating';
 import '../utils/channeltalk/channelTalk';
-import StyledComponentsRegistry from '../../lib/registry';
 
 const queryClient = new QueryClient();
 
@@ -26,18 +25,16 @@ function RootLayoutWrapper({ children }: { children: ReactNode }) {
     <ThemeProvider theme={theme}>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <StyledComponentsRegistry>
-            <AppLayout>
-              <AccessibilityLayout>
-                <AppBar />
-                <MobileBottomNavigation />
-                {children}
-                <ChannelTalkFloating />
-                <AccessibilityFloating />
-                <GlobalModal />
-              </AccessibilityLayout>
-            </AppLayout>
-          </StyledComponentsRegistry>
+          <AppLayout>
+            <AccessibilityLayout>
+              <AppBar />
+              <MobileBottomNavigation />
+              {children}
+              <ChannelTalkFloating />
+              <AccessibilityFloating />
+              <GlobalModal />
+            </AccessibilityLayout>
+          </AppLayout>
         </QueryClientProvider>
       </Provider>
     </ThemeProvider>
