@@ -1,4 +1,5 @@
 import { StyledFloating } from '@/ui/atoms/Floating';
+import Button from '@/ui/atoms/Button';
 import theme from '@/ui/theme';
 import styled from '@emotion/styled';
 
