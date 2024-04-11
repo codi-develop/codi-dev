@@ -1,4 +1,3 @@
-
 import { FormType } from './useForm';
 
 export const getFormattedFormValues = (initialFormValues: FormType) => {
@@ -18,5 +17,4 @@ export const getFormattedFormValues = (initialFormValues: FormType) => {
 
   return form;
 };
-
 
