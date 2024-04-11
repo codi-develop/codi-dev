@@ -97,7 +97,6 @@ function ProfileFormPage() {
       },
     },
   };
-  console.log(data);
   const { form, handleFormValueChange, errors, validateAll, isInvalid } =
     useNewForm(initFormValues, validationSchema, data!);
 
