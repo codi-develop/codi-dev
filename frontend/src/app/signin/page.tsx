@@ -3,7 +3,7 @@
 import PrimaryLogo from '@icons/logo/logo-primary.svg';
 import SecondaryLogo from '@icons/logo/logo-secondary.svg';
 import Link from 'next/link';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';)
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 import Image from 'next/image';
