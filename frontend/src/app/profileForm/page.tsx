@@ -34,6 +34,8 @@ import useGetProfileQuery from '@/queries/profileQuery';
 import useForm, { FormType, FormPropertyType } from '@/hooks/useForm/useForm';
 import LabelBox from '@/ui/molecules/LabelBox';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
+import { ValidateSchema } from '@/types/validate';
 
 function ProfileFormPage() {
   const dispatch = useDispatch();
@@ -44,60 +46,60 @@ function ProfileFormPage() {
   const { id: memberId } = useSelector(selectUser)!;
   const { data, isFetching } = useGetProfileQuery();
 
-  interface ProfileFormValuesType extends FormType {
-    introduction: FormPropertyType<string>;
-    desiredJob: FormPropertyType<string>;
-    job: FormPropertyType<string>;
-    education: FormPropertyType<string>;
-    disability: FormPropertyType<string>;
-    employmentStatus: FormPropertyType<string>;
-    severity: FormPropertyType<string>;
-  }
+  const initFormValues = {
+    introduction: '',
+    desiredJob: '',
+    job: '',
+    education: '',
+    disability: '',
+    employmentStatus: '',
+    severity: '중증',
+  };
 
-  const initialFormValues: ProfileFormValuesType = {
+  const validationSchema: ValidateSchema = {
     introduction: {
-      validCondition: {
-        required: true,
-        minLength: 50,
+      required: {
+        message: '값이 필요합니다.',
+      },
+      minLength: {
+        message: '50자 이상 입력해주세요.',
+        value: 50,
       },
     },
     desiredJob: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '값이 필요합니다.',
       },
     },
     job: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '값이 필요합니다.',
       },
     },
     education: {
-      validCondition: {},
+      required: {
+        message: '값이 필요합니다.',
+      },
     },
     disability: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '값이 필요합니다.',
       },
     },
     employmentStatus: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '값이 필요합니다.',
       },
     },
     severity: {
-      initialValue: '중증',
-      validCondition: {
-        required: true,
+      required: {
+        message: '값이 필요합니다.',
       },
     },
   };
-
-  const {
-    form,
-    handleFormValueChange,
-    validateAllFormValues,
-    convertToFormData,
-  } = useForm(initialFormValues, data!);
+  console.log(data);
+  const { form, handleFormValueChange, errors, validateAll, isInvalid } =
+    useNewForm(initFormValues, validationSchema, data!);
 
   const { file, onUploadFile } = useUploadFile();
   const [bigEducationCategory, setBigEducationCategory] = useState('');
@@ -111,25 +113,23 @@ function ProfileFormPage() {
       setJob(job!);
       if (education === ('초등학교' || '중학교' || '고등학교')) {
         setBigEducationCategory(education);
-        form.education.value = '';
+        form.education = '';
       }
     }
   }, [isFetching]);
 
   const processData = () => {
     if (bigEducationCategory !== '대학교' && bigEducationCategory) {
-      form.education.value = bigEducationCategory;
+      form.education = bigEducationCategory;
     }
 
-    form.employmentStatus.value = EMPLOYMENT_STATUSES_VALUE.get(
-      form.employmentStatus.value,
+    form.employmentStatus = EMPLOYMENT_STATUSES_VALUE.get(
+      form.employmentStatus,
     );
   };
 
   const createFormData = () => {
-    const formValues = convertToFormData();
-
-    const blob = new Blob([JSON.stringify(formValues)], {
+    const blob = new Blob([JSON.stringify(form)], {
       type: 'application/json',
     });
 
@@ -142,9 +142,9 @@ function ProfileFormPage() {
   const handleProfileSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const isFormValid = validateAllFormValues();
+    validateAll();
 
-    if (isFormValid) {
+    if (Object.values(errors).every((e) => !e)) {
       processData();
       createFormData();
       if (isEdit) {
@@ -257,12 +257,12 @@ function ProfileFormPage() {
                   <Label htmlFor="disability" text="장애 분류" />
                   <Dropdown
                     id="disability"
-                    invalid={form.disability.isValid === 'invalid'}
+                    invalid={isInvalid('disability')}
                     width="100%"
                     type="form"
                     title="소분류"
                     categories={DISABILITIES}
-                    selectedCategory={form.disability.value!}
+                    selectedCategory={form.disability!}
                     setSelectedCategory={(disability) =>
                       handleFormValueChange<string>({
                         name: 'disability',
@@ -282,7 +282,7 @@ function ProfileFormPage() {
                     width="50%"
                     type="button"
                     color={
-                      form.severity.value === severity
+                      form.severity === severity
                         ? theme.colors.primary.main
                         : theme.colors.white
                     }
@@ -329,7 +329,7 @@ function ProfileFormPage() {
                     id="education"
                     name="education"
                     placeholder="학교명 검색"
-                    value={form.education.value}
+                    value={form.education}
                     outline
                     onChange={handleFormValueChange}
                   />
@@ -349,8 +349,8 @@ function ProfileFormPage() {
                 <Label htmlFor="job" text="직무 분류" />
                 <JobSelector
                   id="job"
-                  invalid={form.job.isValid === 'invalid'}
-                  selected={form.job.value}
+                  invalid={isInvalid('job')}
+                  selected={form.job}
                   setSelected={(job) =>
                     handleFormValueChange({ name: 'job', value: job })
                   }
@@ -362,13 +362,13 @@ function ProfileFormPage() {
                 <Input
                   id="desiredJob"
                   name="desiredJob"
-                  value={form.desiredJob.value}
+                  value={form.desiredJob}
                   outline
                   maxLength={10}
                   width="60%"
                   placeholder="정확한 직무를 입력해주세요. 10자 내외."
                   onChange={handleFormValueChange}
-                  invalid={form.desiredJob.isValid === 'invalid'}
+                  invalid={isInvalid('desiredJob')}
                   {...{
                     [device('tablet')]: {
                       width: '100%',
@@ -384,14 +384,14 @@ function ProfileFormPage() {
                 width="40%"
                 type="form"
                 title="선택"
-                selectedCategory={form.employmentStatus.value!}
+                selectedCategory={form.employmentStatus!}
                 setSelectedCategory={(employmentStatus) =>
                   handleFormValueChange({
                     name: 'employmentStatus',
                     value: employmentStatus,
                   })
                 }
-                invalid={form.employmentStatus.isValid === 'invalid'}
+                invalid={isInvalid('employmentStatus')}
                 categories={EMPLOYMENT_STATUSES}
               />
             </LabelBox>
@@ -401,10 +401,11 @@ function ProfileFormPage() {
                 id="introduction"
                 name="introduction"
                 placeholder="최소 50 글자"
-                value={form.introduction.value}
+                value={form.introduction}
                 onChange={handleFormValueChange}
-                invalid={form.introduction.isValid === 'invalid'}
+                invalid={isInvalid('introduction')}
               />
+              {errors.introduction}
             </LabelBox>
             <FlexBox
               direction="column"
@@ -415,7 +416,6 @@ function ProfileFormPage() {
               <Button
                 onClick={() => {
                   setSubmitType('complete');
-                  validateAllFormValues();
                 }}
                 width="100%"
                 type="submit"
@@ -427,7 +427,6 @@ function ProfileFormPage() {
                 <Button
                   onClick={() => {
                     setSubmitType('complete-apply');
-                    validateAllFormValues();
                   }}
                   width="100%"
                   type="submit"
