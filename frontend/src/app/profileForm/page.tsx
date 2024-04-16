@@ -34,8 +34,8 @@ import useGetProfileQuery from '@/queries/profileQuery';
 import useForm, { FormType, FormPropertyType } from '@/hooks/useForm/useForm';
 import LabelBox from '@/ui/molecules/LabelBox';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
-import useNewForm from '@/hooks/useNewForm/useNewForm';
 import { ValidateSchema } from '@/types/validate';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
 //test
 function ProfileFormPage() {
   const dispatch = useDispatch();
