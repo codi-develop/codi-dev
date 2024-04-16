@@ -8,15 +8,28 @@ const useNewForm = <T extends { [key: string]: any }>(
   serverData?: object,
 ) => {
   const [form, setForm] = useState(initialValues);
-  const { errors, validateAll, validate } = useValidateForm(
+  const { errors, validateAll, validate, isInvalid } = useValidateForm(
     form,
     validationSchema!,
   );
   /** Form 초기화 */
-  if (serverData)
-    useEffect(() => {
-      setForm((prev) => ({ ...prev, serverData }));
-    }, [serverData]);
+  const setFormFromServerData = (data: object) => {
+    const formValues = { ...form };
+    Object.keys(data).forEach((key) => {
+      if (Object.hasOwn(form, key)) {
+        Object.assign(formValues, {
+          ...formValues,
+          [key]: data[key as keyof typeof data],
+        });
+      }
+    });
+    return formValues;
+  };
+  useEffect(() => {
+    if (serverData) {
+      setForm(setFormFromServerData(serverData!));
+    }
+  }, [serverData]);
 
   /** form value handler */
   const handleFormValueChange = <T,>(
@@ -31,7 +44,14 @@ const useNewForm = <T extends { [key: string]: any }>(
     validate(name!, value);
   };
 
-  return { form, setForm, handleFormValueChange, errors, validateAll };
+  return {
+    form,
+    setForm,
+    handleFormValueChange,
+    errors,
+    validateAll,
+    isInvalid,
+  };
 };
 
 export default useNewForm;
