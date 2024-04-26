@@ -13,7 +13,6 @@ import { formattedDate, formattedMonth } from '@/utils/dateFormat';
 import Button from '@/ui/atoms/Button';
 import Textarea from '@/ui/atoms/Textarea';
 import Typography from '@/ui/atoms/Typography';
-import useForm, { FormType, FormPropertyType } from '@/hooks/useForm/useForm';
 import ChipButton from '@/ui/atoms/ChipButton';
 import { useApplyMentoringMutation } from '@/queries/mentoring/menteeMentoringQuery';
 import Label from '@/ui/atoms/Label';
@@ -22,35 +21,49 @@ import { setCurrentModal, setModalState } from '@/features/modal/modalSlice';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
 import Card from '@/ui/atoms/Card';
 import { ApplyMentoringBody } from '@/types/api/mentoring';
-
-export interface ApplyMentoringFormDataType extends FormType {
-  applicationReason: FormPropertyType<string>;
-  date: FormPropertyType<string>;
-  time: FormPropertyType<string>;
-}
-
-const initialFormValues: ApplyMentoringFormDataType = {
-  applicationReason: {
-    validCondition: {
-      required: true,
-      minLength: 50,
-    },
-  },
-  date: {
-    validCondition: {
-      required: true,
-    },
-  },
-  time: {
-    validCondition: {
-      required: true,
-    },
-  },
-};
+import { ValidateSchema } from '@/types/validate';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
+import FormTextarea from '@/ui/molecules/Form/FormTextarea';
+import FormErrorContainer from '@/ui/molecules/Form/FormErrorContainer';
 
 function MentoringApplyFormPage() {
-  const { form, handleFormValueChange, convertToFormData } =
-    useForm(initialFormValues);
+  const initialFormValues = {
+    applicationReason: '',
+    date: '',
+    time: '',
+  };
+
+  const validationSchema: ValidateSchema = {
+    applicationReason: {
+      required: {
+        message: '신청 사유를 입력해주세요.',
+      },
+      minLength: {
+        message: '50자 이상 입력해주세요.',
+        value: 50,
+      },
+    },
+    date: {
+      required: {
+        message: '일자를 입력해주세요.',
+      },
+    },
+    time: {
+      required: {
+        message: '시간을 입력해주세요.',
+      },
+    },
+  };
+
+  const {
+    form,
+    handleFormValueChange,
+    validateAll,
+    setIsFormSubmitted,
+    isInvalid,
+    errors,
+    isFormSubmitted,
+  } = useNewForm(initialFormValues, validationSchema);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<string>();
   const param = useSearchParams();
@@ -82,8 +95,21 @@ function MentoringApplyFormPage() {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const formValues = convertToFormData<ApplyMentoringBody>();
-    mutation.mutate(formValues!);
+    const isValid = validateAll();
+    setIsFormSubmitted(true);
+
+    if (isValid) {
+      // mutation.mutate(form!);
+      return;
+    }
+
+    dispatch(
+      setCurrentModal({
+        type: 'confirm',
+        text: '신청 날짜 와 시간 을 입력해주세요',
+      }),
+    );
+    dispatch(setModalState(true));
   };
 
   useEffect(() => {
@@ -145,7 +171,7 @@ function MentoringApplyFormPage() {
                         color={
                           scheduled
                             ? theme.colors.white
-                            : time === form.time.value
+                            : time === form.time
                               ? theme.colors.primary.main
                               : theme.colors.background
                         }
@@ -167,23 +193,17 @@ function MentoringApplyFormPage() {
               htmlFor="applicationReason"
               text="하고싶은 말 (최소 50 글자)"
             />
-            <Textarea
+            <FormTextarea
               id="applicationReason"
               minLength={50}
-              value={form.applicationReason.value}
+              value={form.applicationReason}
               name="applicationReason"
               onChange={handleFormValueChange}
+              invalid={isInvalid('applicationReason')}
+              errorMessage={errors?.applicationReason}
             />
           </LabelBox>
-          <Button
-            disabled={
-              form.applicationReason.value?.length < 50 ||
-              !form.date.value ||
-              !form.time.value
-            }
-            type="submit"
-            variant="square"
-          >
+          <Button type="submit" variant="square">
             멘토링 신청하기
           </Button>
         </FlexBox>

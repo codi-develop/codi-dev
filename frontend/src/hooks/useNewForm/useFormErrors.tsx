@@ -5,10 +5,11 @@ interface FormErrors {
 }
 
 const useFormErrors = <T extends object>(form: T) => {
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<FormErrors | null>(null);
 
   const isInvalid = (key: string) => {
-    return key in errors;
+    if (errors) return key in errors!;
+    return undefined;
   };
 
   return { errors, setErrors, isInvalid };

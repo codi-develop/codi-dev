@@ -8,35 +8,48 @@ import FlexBox from '@/ui/atoms/FlexBox';
 import Input from '@/ui/atoms/Input';
 import StyledLink from '@/ui/atoms/Link';
 import Typography from '@/ui/atoms/Typography';
-import theme, { device } from '@/ui/theme';
-import useForm, { FormPropertyType, FormType } from '@/hooks/useForm/useForm';
+import theme from '@/ui/theme';
 import {
   AccountImageComponent,
   AccountFormContainer,
 } from '@/components/pages/account/AccountContainers';
-import styled from '@emotion/styled';
-import ImageComponent from '@/ui/atoms/ImageComponent';
 import FindIdImage from '@images/find-id.png';
+import { ValidateSchema } from '@/types/validate';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
+import FormError from '@/ui/molecules/Typography/FormError';
+import FormInput from '@/ui/molecules/Form/FormInput';
 
 function FindIdPage() {
-  interface FindIdFormValuesType extends FormType {
-    email: FormPropertyType<string>;
+  interface FindIdForm {
+    email: string;
   }
+  const initialFormValues = {
+    email: '',
+  };
 
-  const initialFormValues: FindIdFormValuesType = {
+  const validationSchema: ValidateSchema = {
     email: {
-      validCondition: {
-        required: true,
-        regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+      required: {
+        message: '이메일을 입력해주세요.',
+      },
+      regex: {
+        message: '올바른 이메일 형식이 아닙니다.',
+        value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
       },
     },
   };
 
-  const { form, handleFormValueChange, validateAllFormValues } =
-    useForm(initialFormValues);
+  const {
+    form,
+    errors,
+    handleFormValueChange,
+    validateAll,
+    isInvalid,
+    setIsFormSubmitted,
+  } = useNewForm(initialFormValues, validationSchema);
 
   const postFindId = async () => {
-    const { status } = await findId(form.email.value!);
+    const { status } = await findId(form.email!);
 
     if (status === 200) {
       alert('해당 이메일로 아이디가 전송되었습니다.');
@@ -49,8 +62,8 @@ function FindIdPage() {
 
   const handleSubmitFindIdForm = async (e: FormEvent) => {
     e.preventDefault();
-
-    const isFormValid = validateAllFormValues();
+    setIsFormSubmitted(true);
+    const isFormValid = validateAll();
 
     if (isFormValid) await postFindId();
   };
@@ -91,13 +104,14 @@ function FindIdPage() {
               </Typography>
             </div>
             <FlexBox direction="column" rowGap="20px">
-              <Input
+              <FormInput
                 id="email"
                 name="email"
                 placeholder="이메일을 입력해주세요."
-                value={form.email.value}
+                value={form.email}
                 onChange={handleFormValueChange}
-                invalid={form.email.isValid === 'invalid'}
+                invalid={isInvalid('email')}
+                errorMessage={errors?.email!}
               />
               <Button type="submit" width="100%" variant="square">
                 아이디 찾기

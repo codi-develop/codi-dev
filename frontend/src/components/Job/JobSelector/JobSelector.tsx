@@ -30,7 +30,7 @@ function JobSelector({
 }: {
   id: string;
   width?: string;
-  invalid: boolean;
+  invalid: boolean | undefined;
   open: boolean;
   setOpen: SetState<boolean>;
   selected: string;

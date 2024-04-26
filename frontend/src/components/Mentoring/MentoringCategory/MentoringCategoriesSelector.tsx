@@ -11,6 +11,12 @@ import theme from '@/ui/theme';
 import MentoringCategoryButton from './MentoringCategoryButton';
 import FlexBox from '@/ui/atoms/FlexBox';
 
+export interface MentorCategoriesData {
+  iconComponent: any;
+  text: string;
+  value: string;
+}
+
 export const MENTOR_CATEGORIES = [
   { iconComponent: Prepare, text: '면접대비', value: 'PREPARINGINTERVIEW' },
   { iconComponent: Direction, text: '커리어방향', value: 'CAREERDIRECTION' },
@@ -36,11 +42,14 @@ function MentorCategoriesSelector({
   const handleClickMentoringCategory = (text: string) => {
     const copied = [...mentoringCategories];
 
-    if (mentoringCategories?.includes(text))
+    if (mentoringCategories?.includes(text)) {
+      if (mentoringCategories.length === 1) {
+        return;
+      }
       setMentoringCategories([
         ...copied.filter((category) => category !== text),
       ]);
-    else setMentoringCategories([...copied, text]);
+    } else setMentoringCategories([...copied, text]);
   };
   return (
     <FlexBox justifyContent="flex-start" columnGap="10px" rowGap="10px" isWrap>

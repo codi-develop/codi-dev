@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, use, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import IdIcon from '@icons/common/id.svg';
 import PasswordIcon from '@icons/common/password.svg';
 import TagIcon from '@icons/common/tag.svg';
@@ -11,7 +11,6 @@ import Typography from '@/ui/atoms/Typography';
 import theme from '@/ui/theme';
 import Button from '@/ui/atoms/Button';
 import IconInputContainer from '@/ui/molecules/Input/IconInput';
-import Input from '@/ui/atoms/Input';
 import FlexBox from '@/ui/atoms/FlexBox';
 import Dropdown from '@/ui/atoms/Dropdown';
 import {
@@ -30,48 +29,10 @@ import Markdown from 'react-markdown';
 import { privateData, useTerm } from '@/components/Terms/terms';
 import TermsChecker from '@/components/Terms/TermsChecker';
 import LabelBox from '@/ui/molecules/LabelBox';
-import useForm, { FormPropertyType, FormType } from '@/hooks/useForm/useForm';
-
-interface SignUpFormValuesType extends FormType {
-  birth: FormPropertyType<string>;
-  email: FormPropertyType<string>;
-  id: FormPropertyType<string>;
-  gender: FormPropertyType<string>;
-  name: FormPropertyType<string>;
-  password: FormPropertyType<string>;
-}
-
-const initialFormValues: SignUpFormValuesType = {
-  id: {
-    validCondition: {
-      required: true,
-      regex: /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{4,12}$/,
-    },
-  },
-  birth: {
-    validCondition: {
-      required: true,
-    },
-  },
-  email: {
-    validCondition: { required: true },
-  },
-  password: {
-    validCondition: {
-      required: true,
-      regex: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
-    },
-  },
-  name: {
-    validCondition: {
-      required: true,
-    },
-  },
-  gender: {
-    validCondition: {},
-    initialValue: '선택안함',
-  },
-};
+import { ValidateSchema } from '@/types/validate';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
+import FormInput from '@/ui/molecules/Form/FormInput';
+import { setCurrentModal } from '@/features/modal/modalSlice';
 
 const GENDER_LIST = [
   { name: '남자', key: 'MAN' },
@@ -80,6 +41,48 @@ const GENDER_LIST = [
 ];
 
 function SignUpPage() {
+  const initialFormValues = {
+    birth: '',
+    email: '',
+    id: '',
+    gender: '선택안함',
+    name: '',
+    password: '',
+  };
+
+  const validationSchema: ValidateSchema = {
+    id: {
+      required: {
+        message: '아이디를 입력해주세요.',
+      },
+      regex: {
+        message: '올바른 아이디 형식이 아닙니다',
+        value: /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{4,12}$/,
+      },
+    },
+    birth: {
+      required: {
+        message: '생년월일을 입력해주세요.',
+      },
+    },
+    email: {
+      required: { message: '이메일을 입력해주세요' },
+    },
+    password: {
+      required: {
+        message: '비밀번호를 입력해주세요.',
+      },
+      regex: {
+        message: '올바른 비밀번호 형식이 아닙니다.',
+        value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
+      },
+    },
+    name: {
+      required: {
+        message: '이름을 입력해주세요.',
+      },
+    },
+  };
   const [emailType, setEmailType] = useState('gmail.com');
   const [gender, setGender] = useState(GENDER_LIST[2]);
   const [birth, setBirth] = useState({
@@ -87,14 +90,16 @@ function SignUpPage() {
     month: 1,
     day: 1,
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
     form,
     handleFormValueChange,
-    validateAllFormValues,
-    convertToFormData,
-  } = useForm(initialFormValues);
+    validateAll,
+    isInvalid,
+    errors,
+    setIsFormSubmitted,
+    isFormSubmitted,
+  } = useNewForm(initialFormValues, validationSchema);
 
   const [isIdDuplicated, setIsIdDuplicated] = useState<Boolean | undefined>(
     undefined,
@@ -106,7 +111,7 @@ function SignUpPage() {
 
   const checkDuplicateId = async () => {
     const { data, status, errorMessage } = await postCheckDuplicateId<boolean>(
-      form.id.value,
+      form.id,
     );
     handleApiCallback(
       status!,
@@ -118,29 +123,27 @@ function SignUpPage() {
   const dispatch = useDispatch();
 
   const handleSubmit = async (e: FormEvent) => {
-    setIsSubmitted(true);
+    setIsFormSubmitted(true);
     e.preventDefault();
 
-    const isFormValid = validateAllFormValues();
+    const isValid = validateAll();
 
     if (!checkUserTerm || !checkPrivateDataTerm) {
       return;
     }
 
-    if (isFormValid) {
-      const formData = convertToFormData<SignUpBody>();
-
+    if (isValid) {
       const { status, errorMessage } = await signUp({
-        ...formData,
-        email: `${form.email.value}@${emailType}`,
+        ...form,
+        email: `${form.email}@${emailType}`,
       } as SignUpBody);
 
       handleApiCallback(
         status!,
         async () => {
           const { data } = await signIn({
-            id: form.id.value,
-            password: form.password.value,
+            id: form.id,
+            password: form.password,
           });
           if (data) dispatch(setIsLoggedIn(true));
           router.push('/signup/complete');
@@ -184,16 +187,17 @@ function SignUpPage() {
               <FlexBox>
                 <IconInputContainer iconComponent={<IdIcon />}>
                   <Label htmlFor="id" text="아이디" />
-                  <Input
+                  <FormInput
                     id="id"
                     name="id"
                     onChange={handleFormValueChange}
-                    value={form.id.value}
+                    value={form.id}
                     invalid={
-                      form.id.isValid === 'invalid' ||
-                      (form.id.isValid === 'valid' && isIdDuplicated === true)
+                      isInvalid('id') ||
+                      (isInvalid('id') && isIdDuplicated === true)
                     }
                     outline
+                    errorMessage={errors?.id}
                   />
                 </IconInputContainer>
 
@@ -203,7 +207,7 @@ function SignUpPage() {
                   variant="square"
                   type="button"
                   {...{ marginLeft: '10px' }}
-                  disabled={form.id.isValid === 'invalid'}
+                  disabled={isInvalid('id')}
                 >
                   중복확인
                 </Button>
@@ -222,27 +226,29 @@ function SignUpPage() {
           >
             <IconInputContainer iconComponent={<PasswordIcon />}>
               <Label htmlFor="password" text="비밀번호" />
-              <Input
+              <FormInput
                 id="password"
                 name="password"
                 onChange={handleFormValueChange}
-                value={form.password.value}
-                invalid={form.password.isValid === 'invalid'}
+                value={form.password}
+                invalid={isInvalid('password')}
                 type="password"
                 outline
+                errorMessage={errors?.password}
               />
             </IconInputContainer>
           </LabelBox>
           <LabelBox text="이름">
             <IconInputContainer iconComponent={<TagIcon />}>
               <Label htmlFor="name" text="이름" />
-              <Input
+              <FormInput
                 id="name"
                 name="name"
                 onChange={handleFormValueChange}
-                value={form.name.value}
-                invalid={form.name.isValid === 'invalid'}
+                value={form.name}
+                invalid={isInvalid('name')}
                 outline
+                errorMessage={errors?.name}
               />
             </IconInputContainer>
           </LabelBox>
@@ -303,13 +309,14 @@ function SignUpPage() {
           <LabelBox text="이메일">
             <FlexBox columnGap="10px">
               <Label htmlFor="email" text="이메일" />
-              <Input
+              <FormInput
                 id="email"
                 name="email"
                 onChange={handleFormValueChange}
-                value={form.email.value}
-                invalid={form.email.isValid === 'invalid'}
+                value={form.email}
+                invalid={isInvalid('email')}
                 outline
+                errorMessage={errors?.email}
               />
               @
               <Label htmlFor="emailType" text="이메일 유형" />
@@ -331,14 +338,14 @@ function SignUpPage() {
                 check={checkUserTerm}
                 setChecked={setCheckUserTerm}
                 content={useTerm}
-                submitted={isSubmitted}
+                submitted={isFormSubmitted}
               />
               <TermsChecker
                 text="개인정보 처리 방침에 동의합니다."
                 check={checkPrivateDataTerm}
                 setChecked={setCheckPrivateDataTerm}
                 content={privateData}
-                submitted={isSubmitted}
+                submitted={isFormSubmitted}
               />
             </FlexBox>
           </LabelBox>
@@ -360,7 +367,7 @@ export default SignUpPage;
           </Button>
             <Input
               value={emailCode}
-              onChange={(e) => setEmailCode(e.target.value)}
+              onChange={(e) => setEmailCode(e.target)}
               outline
             />
             <Button width="30%" variant="square">

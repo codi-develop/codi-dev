@@ -13,7 +13,6 @@ import Input from '@/ui/atoms/Input';
 import Button from '@/ui/atoms/Button';
 import Dropdown from '@/ui/atoms/Dropdown';
 import FlexBox from '@/ui/atoms/FlexBox';
-import Textarea from '@/ui/atoms/Textarea';
 import useUploadFile from '@/hooks/useUploadFile';
 import {
   DISABILITIES,
@@ -31,11 +30,13 @@ import { selectUser, setUser } from '@/features/user/userSlice';
 import { RegisterProfileResponse } from '@/types/api/profile';
 import Label from '@/ui/atoms/Label';
 import useGetProfileQuery from '@/queries/profileQuery';
-import useForm, { FormType, FormPropertyType } from '@/hooks/useForm/useForm';
 import LabelBox from '@/ui/molecules/LabelBox';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
 import { ValidateSchema } from '@/types/validate';
 import useNewForm from '@/hooks/useNewForm/useNewForm';
+import FormErrorContainer from '@/ui/molecules/Form/FormErrorContainer';
+import FormInput from '@/ui/molecules/Form/FormInput';
+import FormTextarea from '@/ui/molecules/Form/FormTextarea';
 //test
 function ProfileFormPage() {
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ function ProfileFormPage() {
   const validationSchema: ValidateSchema = {
     introduction: {
       required: {
-        message: '값이 필요합니다.',
+        message: '자기소개를 입력해주세요.',
       },
       minLength: {
         message: '50자 이상 입력해주세요.',
@@ -68,17 +69,12 @@ function ProfileFormPage() {
     },
     desiredJob: {
       required: {
-        message: '값이 필요합니다.',
+        message: '희망 직무를 입력해주세요.',
       },
     },
     job: {
       required: {
-        message: '값이 필요합니다.',
-      },
-    },
-    education: {
-      required: {
-        message: '값이 필요합니다.',
+        message: '직무 카테고리를 선택해주세요.',
       },
     },
     disability: {
@@ -88,18 +84,19 @@ function ProfileFormPage() {
     },
     employmentStatus: {
       required: {
-        message: '값이 필요합니다.',
-      },
-    },
-    severity: {
-      required: {
-        message: '값이 필요합니다.',
+        message: '취업 상탤를 입력해주세요',
       },
     },
   };
 
-  const { form, handleFormValueChange, errors, validateAll, isInvalid } =
-    useNewForm(initFormValues, validationSchema, data!);
+  const {
+    form,
+    handleFormValueChange,
+    errors,
+    validateAll,
+    isInvalid,
+    setIsFormSubmitted,
+  } = useNewForm(initFormValues, validationSchema, data!);
 
   const { file, onUploadFile } = useUploadFile();
   const [bigEducationCategory, setBigEducationCategory] = useState('');
@@ -141,10 +138,10 @@ function ProfileFormPage() {
 
   const handleProfileSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsFormSubmitted(true);
+    const isFormValid = validateAll();
 
-    validateAll();
-
-    if (Object.values(errors).every((e) => !e)) {
+    if (isFormValid) {
       processData();
       createFormData();
       if (isEdit) {
@@ -255,21 +252,23 @@ function ProfileFormPage() {
               <FlexBox direction="column" rowGap="10px">
                 <FlexBox columnGap="10px">
                   <Label htmlFor="disability" text="장애 분류" />
-                  <Dropdown
-                    id="disability"
-                    invalid={isInvalid('disability')}
-                    width="100%"
-                    type="form"
-                    title="소분류"
-                    categories={DISABILITIES}
-                    selectedCategory={form.disability!}
-                    setSelectedCategory={(disability) =>
-                      handleFormValueChange<string>({
-                        name: 'disability',
-                        value: disability,
-                      })
-                    }
-                  />
+                  <FormErrorContainer errorMessage={errors?.disability!}>
+                    <Dropdown
+                      id="disability"
+                      invalid={isInvalid('disability')}
+                      width="100%"
+                      type="form"
+                      title="소분류"
+                      categories={DISABILITIES}
+                      selectedCategory={form.disability!}
+                      setSelectedCategory={(disability) =>
+                        handleFormValueChange<string>({
+                          name: 'disability',
+                          value: disability,
+                        })
+                      }
+                    />
+                  </FormErrorContainer>
                 </FlexBox>
               </FlexBox>
             </LabelBox>
@@ -347,19 +346,21 @@ function ProfileFormPage() {
                 }}
               >
                 <Label htmlFor="job" text="직무 분류" />
-                <JobSelector
-                  id="job"
-                  invalid={isInvalid('job')}
-                  selected={form.job}
-                  setSelected={(job) =>
-                    handleFormValueChange({ name: 'job', value: job })
-                  }
-                  open={openJobSelector}
-                  setOpen={setOpenJobSelector}
-                  width="100%"
-                />
+                <FormErrorContainer errorMessage={errors?.job!}>
+                  <JobSelector
+                    id="job"
+                    invalid={isInvalid('job')}
+                    selected={form.job}
+                    setSelected={(job) =>
+                      handleFormValueChange({ name: 'job', value: job })
+                    }
+                    open={openJobSelector}
+                    setOpen={setOpenJobSelector}
+                    width="100%"
+                  />
+                </FormErrorContainer>
                 <Label htmlFor="desiredJob" text="희망 직무" />
-                <Input
+                <FormInput
                   id="desiredJob"
                   name="desiredJob"
                   value={form.desiredJob}
@@ -374,38 +375,41 @@ function ProfileFormPage() {
                       width: '100%',
                     },
                   }}
+                  errorMessage={errors?.desiredJob}
                 />
               </FlexBox>
             </LabelBox>
             <LabelBox text="취업 상태">
               <Label htmlFor="employmentStatus" text="취업 상태" />
-              <Dropdown
-                id="employmentStatus"
-                width="40%"
-                type="form"
-                title="선택"
-                selectedCategory={form.employmentStatus!}
-                setSelectedCategory={(employmentStatus) =>
-                  handleFormValueChange({
-                    name: 'employmentStatus',
-                    value: employmentStatus,
-                  })
-                }
-                invalid={isInvalid('employmentStatus')}
-                categories={EMPLOYMENT_STATUSES}
-              />
+              <FormErrorContainer errorMessage={errors?.employmentStatus!}>
+                <Dropdown
+                  id="employmentStatus"
+                  width="40%"
+                  type="form"
+                  title="선택"
+                  selectedCategory={form.employmentStatus!}
+                  setSelectedCategory={(employmentStatus) =>
+                    handleFormValueChange({
+                      name: 'employmentStatus',
+                      value: employmentStatus,
+                    })
+                  }
+                  invalid={isInvalid('employmentStatus')}
+                  categories={EMPLOYMENT_STATUSES}
+                />
+              </FormErrorContainer>
             </LabelBox>
             <LabelBox text="자기 소개">
               <Label htmlFor="introduction" text="자기 소개" />
-              <Textarea
+              <FormTextarea
                 id="introduction"
                 name="introduction"
                 placeholder="최소 50 글자"
                 value={form.introduction}
                 onChange={handleFormValueChange}
                 invalid={isInvalid('introduction')}
+                errorMessage={errors?.introduction!}
               />
-              {errors.introduction}
             </LabelBox>
             <FlexBox
               direction="column"

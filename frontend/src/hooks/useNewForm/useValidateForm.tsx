@@ -10,9 +10,17 @@ const useValidateForm = <T extends { [key: string]: any }>(
   const copied = { ...validateSchema };
   const { errors, setErrors, isInvalid } = useFormErrors(form);
   const validateAll = () => {
+    const results: boolean[] = [];
     Object.keys(copied).forEach((k: string) => {
-      validate(k, form[k]);
+      const result = validate(k, form[k]);
+      results.push(result);
     });
+
+    if (results.some((r) => !r)) {
+      return false;
+    }
+
+    return true;
   };
 
   const validate = (k: string, value: any) => {
@@ -22,7 +30,7 @@ const useValidateForm = <T extends { [key: string]: any }>(
     if (errorMessage) {
       setErrors((prev) => ({ ...prev!, [k as string]: errorMessage! }));
 
-      return;
+      return false;
     }
 
     setErrors((prev) => {
@@ -30,6 +38,8 @@ const useValidateForm = <T extends { [key: string]: any }>(
       delete copied[k];
       return copied;
     });
+
+    return true;
   };
 
   return { validate, validateAll, errors, isInvalid };

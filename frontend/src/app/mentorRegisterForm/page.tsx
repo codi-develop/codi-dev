@@ -22,13 +22,16 @@ import {
   editMentor as patchEditMentor,
 } from '@/api/mentorApi';
 import JobSelector from '@/components/Job/JobSelector/JobSelector';
-
 import { handleApiCallback } from '@/utils/api';
 import { CAREERS } from '@/constants';
-import useForm, { FormPropertyType, FormType } from '@/hooks/useForm/useForm';
 import { useGetMentorQuery } from '@/queries/mentorQuery';
 import LabelBox from '@/ui/molecules/LabelBox';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
+import { ValidateSchema } from '@/types/validate';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
+import FormInput from '@/ui/molecules/Form/FormInput';
+import FormErrorContainer from '@/ui/molecules/Form/FormErrorContainer';
+import FormTextarea from '@/ui/molecules/Form/FormTextarea';
 
 function MentorRegisterForm() {
   const router = useRouter();
@@ -38,52 +41,50 @@ function MentorRegisterForm() {
   const [openJobSelector, setOpenJobSelector] = useState(false);
   const formData = new FormData();
 
-  interface MentorRegisterFormValuesType extends FormType {
-    company: FormPropertyType<string>;
-    introduction: FormPropertyType<string>;
-    jobName: FormPropertyType<string>;
-    job: FormPropertyType<string>;
-    career: FormPropertyType<string>;
-    inOffice: FormPropertyType<boolean>;
-    mentoringCategories: FormPropertyType<string[]>;
-  }
+  const initialFormValues = {
+    company: '',
+    introduction: '',
+    jobName: '',
+    job: '',
+    career: '',
+    inOffice: false,
+    mentoringCategories: ['면접대비'],
+  };
 
-  const initialFormValues: MentorRegisterFormValuesType = {
+  const validationSchema: ValidateSchema = {
     company: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '회사를 입력해주세요.',
       },
     },
     introduction: {
-      validCondition: {
-        required: true,
-        minLength: 50,
+      required: {
+        message: '자기 소개를 입력해주세요.',
+      },
+      minLength: {
+        message: '최소 50자 이상 입력해주세요.',
+        value: 50,
       },
     },
     jobName: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '프로필에 표시될 직무명을 입력해주세요.',
       },
     },
     job: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '직무를 입력해주세요.',
       },
     },
     career: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '경력을 입력해주세요.',
       },
-    },
-    inOffice: {
-      validCondition: {},
-      initialValue: false,
     },
     mentoringCategories: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '카테고리를 입력해주세요.',
       },
-      initialValue: [],
     },
   };
 
@@ -94,20 +95,26 @@ function MentorRegisterForm() {
   const {
     form,
     handleFormValueChange,
-    validateAllFormValues,
-    convertToFormData,
-  } = useForm(initialFormValues, isEdit ? data : undefined);
+    validateAll,
+    isInvalid,
+    errors,
+    setIsFormSubmitted,
+  } = useNewForm(
+    initialFormValues,
+    validationSchema,
+    isEdit ? data : undefined,
+  );
 
   const processData = () => {
-    form.mentoringCategories.value = MENTOR_CATEGORIES.filter((category) =>
-      form.mentoringCategories.value.includes(category.text),
-    ).map((category) => category.value);
+    form.mentoringCategories = [
+      ...MENTOR_CATEGORIES?.filter((category) =>
+        form.mentoringCategories.includes(category.text),
+      ).map((category) => category.value),
+    ];
   };
 
   const createFormData = () => {
-    const formValues = convertToFormData();
-
-    const blob = new Blob([JSON.stringify(formValues)], {
+    const blob = new Blob([JSON.stringify(form)], {
       type: 'application/json',
     });
     formData.append('mentor', blob);
@@ -116,7 +123,8 @@ function MentorRegisterForm() {
 
   const handleMentorProfileSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const isFormValid = validateAllFormValues();
+    setIsFormSubmitted(true);
+    const isFormValid = validateAll();
 
     if (isFormValid) {
       processData();
@@ -171,14 +179,15 @@ function MentorRegisterForm() {
           <FlexBox direction="column" rowGap="50px">
             <LabelBox labelColor={theme.colors.secondary.main} text="직무경력">
               <FlexBox direction="column" rowGap="14px">
-                <Input
+                <FormInput
                   placeholder="회사명을 입력해주세요."
                   outline
                   id="company"
                   name="company"
                   onChange={handleFormValueChange}
-                  value={form.company.value}
-                  invalid={form.company.isValid === 'invalid'}
+                  value={form.company}
+                  invalid={isInvalid('company')}
+                  errorMessage={errors?.company}
                 />
                 <FlexBox
                   justifyContent="space-between"
@@ -205,48 +214,52 @@ function MentorRegisterForm() {
                       },
                     }}
                   >
-                    <JobSelector
-                      id="job"
-                      invalid={form.job.isValid === 'invalid'}
-                      selected={form.job.value}
-                      setSelected={(job) =>
-                        handleFormValueChange({ name: 'job', value: job })
-                      }
-                      open={openJobSelector}
-                      setOpen={setOpenJobSelector}
-                      width="100%"
-                      {...{
-                        [device('tablet')]: {
-                          width: '100% !important',
-                        },
-                      }}
-                    />
-                    <Dropdown
-                      id="career"
-                      width="100%"
-                      type="form"
-                      title="경력"
-                      categories={CAREERS}
-                      selectedCategory={form.career.value}
-                      setSelectedCategory={(career) =>
-                        handleFormValueChange({
-                          name: 'career',
-                          value: career,
-                        })
-                      }
-                      invalid={form.career.isValid === 'invalid'}
-                      {...{
-                        [device('tablet')]: {
-                          width: '100% !important',
-                        },
-                      }}
-                    />
+                    <FormErrorContainer errorMessage={errors?.job!}>
+                      <JobSelector
+                        id="job"
+                        invalid={isInvalid('job')}
+                        selected={form.job}
+                        setSelected={(job) =>
+                          handleFormValueChange({ name: 'job', value: job })
+                        }
+                        open={openJobSelector}
+                        setOpen={setOpenJobSelector}
+                        width="100%"
+                        {...{
+                          [device('tablet')]: {
+                            width: '100% !important',
+                          },
+                        }}
+                      />
+                    </FormErrorContainer>
+                    <FormErrorContainer errorMessage={errors?.career!}>
+                      <Dropdown
+                        id="career"
+                        width="100%"
+                        type="form"
+                        title="경력"
+                        categories={CAREERS}
+                        selectedCategory={form.career}
+                        setSelectedCategory={(career) =>
+                          handleFormValueChange({
+                            name: 'career',
+                            value: career,
+                          })
+                        }
+                        invalid={isInvalid('career')}
+                        {...{
+                          [device('tablet')]: {
+                            width: '100% !important',
+                          },
+                        }}
+                      />
+                    </FormErrorContainer>
                   </FlexBox>
 
                   <div>
                     <Checkbox
                       label="재직중"
-                      checked={form.inOffice.value}
+                      checked={form.inOffice}
                       setChecked={(value) => {
                         handleFormValueChange({
                           name: 'inOffice',
@@ -263,14 +276,15 @@ function MentorRegisterForm() {
               text="직무명 입력"
               labelColor={theme.colors.secondary.main}
             >
-              <Input
+              <FormInput
                 id="jobName"
                 name="jobName"
                 placeholder="프로필에 표시 될 직무명을 입력해주세요."
                 outline
                 onChange={handleFormValueChange}
-                value={form.jobName.value}
-                invalid={form.jobName.isValid === 'invalid'}
+                value={form.jobName}
+                invalid={isInvalid('jobName')}
+                errorMessage={errors?.jobName}
               />
             </LabelBox>
             <LabelBox
@@ -302,10 +316,10 @@ function MentorRegisterForm() {
                 </Button>
               </FlexBox>
             </LabelBox>
-            <LabelBox text="멘토링분야" helpText="(최대 4개)">
+            <LabelBox text="멘토링분야" helpText="(1 - 4개)">
               <MentoringCategoriesSelector
                 id="mentoringCategories"
-                mentoringCategories={form.mentoringCategories.value}
+                mentoringCategories={form.mentoringCategories}
                 setMentoringCategories={(category) =>
                   handleFormValueChange({
                     name: 'mentoringCategories',
@@ -315,15 +329,15 @@ function MentorRegisterForm() {
               />
             </LabelBox>
             <LabelBox text="자기 소개" labelColor={theme.colors.secondary.main}>
-              <Textarea
-                as="textarea"
+              <FormTextarea
                 id="introduction"
                 name="introduction"
                 placeholder="최소 50 글자"
                 outline
                 onChange={handleFormValueChange}
-                value={form.introduction.value}
-                invalid={form.introduction.isValid === 'invalid'}
+                value={form.introduction}
+                invalid={isInvalid('introduction')}
+                errorMessage={errors?.introduction}
               />
             </LabelBox>
             <Button width="100%" variant="square" type="submit">

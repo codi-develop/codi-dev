@@ -77,7 +77,7 @@ export interface TypographyProps {
   align?: 'left' | 'right' | 'center';
   wordBreak?: 'keep-all' | 'initial' | 'break-all';
   lineHeight?:string;
-  children: string | number;
+  children: ReactNode;
 }
 
 export interface DropdownProps {

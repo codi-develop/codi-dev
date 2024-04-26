@@ -12,7 +12,7 @@ const StyledIconInputContainer = styled.div`
 const IconInputAdornment = styled.div`
   position: absolute;
   left: 20px;
-  top: 31%;
+  top: 13px;
   width: 24px;
   height: 24px;
 `;

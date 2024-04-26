@@ -1,46 +1,49 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { findPassword } from '@/api/accountApi';
 import Button from '@/ui/atoms/Button';
-import Input from '@/ui/atoms/Input';
 import FlexBox from '@/ui/atoms/FlexBox';
 import Container from '@/ui/atoms/Container';
 import Typography from '@/ui/atoms/Typography';
 import theme from '@/ui/theme';
-import useForm, { FormPropertyType, FormType } from '@/hooks/useForm/useForm';
 import {
   AccountImageComponent,
   AccountFormContainer,
 } from '@/components/pages/account/AccountContainers';
 import FindPwImage from '@images/find-pw.png';
+import { ValidateSchema } from '@/types/validate';
+import useNewForm from '@/hooks/useNewForm/useNewForm';
+import FormInput from '@/ui/molecules/Form/FormInput';
 
 function FindPwPage() {
-  interface FindPasswordFormValuesType extends FormType {
-    email: FormPropertyType<string>;
-    id: FormPropertyType<string>;
-  }
-  const initialFormValues: FindPasswordFormValuesType = {
+  const initialFormValues = {
+    email: '',
+    id: '',
+  };
+
+  const validationSchema: ValidateSchema = {
     email: {
-      validCondition: {
-        required: true,
-        regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+      required: {
+        message: '이메일을 입력해주세요.',
+      },
+      regex: {
+        message: '올바른 이메일 형식이 아닙니다.',
+        value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
       },
     },
+
     id: {
-      validCondition: {
-        required: true,
+      required: {
+        message: '아이디를 입력해주세요.',
       },
     },
   };
 
-  const { form, handleFormValueChange, validateAllFormValues } =
-    useForm(initialFormValues);
+  const { form, handleFormValueChange, validateAll, isInvalid, errors } =
+    useNewForm(initialFormValues, validationSchema);
   const postFindPw = async () => {
-    const { data, status } = await findPassword(
-      form.email.value,
-      form.id.value,
-    );
+    const { data, status } = await findPassword(form.email, form.id);
 
     if (status === 200) {
       alert('해당 이메일로 임시 비밀번호가 전송되었습니다.');
@@ -54,7 +57,7 @@ function FindPwPage() {
   const handleSubmitFindPwForm = async (e: FormEvent) => {
     e.preventDefault();
 
-    const isFormValid = validateAllFormValues();
+    const isFormValid = validateAll();
 
     if (isFormValid) await postFindPw();
   };
@@ -87,21 +90,24 @@ function FindPwPage() {
             </div>
 
             <FlexBox direction="column" rowGap="20px">
-              <Input
+              <FormInput
                 id="email"
                 name="email"
-                value={form.email.value}
+                value={form.email}
                 onChange={handleFormValueChange}
-                invalid={form.email.isValid === 'invalid'}
+                invalid={isInvalid('email')}
                 placeholder="이메일을 입력해주세요."
+                errorMessage={errors?.email}
               />
-              <Input
+
+              <FormInput
                 id="id"
                 name="id"
-                value={form.id.value}
-                invalid={form.id.isValid === 'invalid'}
+                value={form.id}
+                invalid={isInvalid('id')}
                 onChange={handleFormValueChange}
                 placeholder="아이디를 입력해주세요."
+                errorMessage={errors?.id}
               />
               <Button type="submit" variant="default" size="small">
                 임시 비밀번호 발송하기

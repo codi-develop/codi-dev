@@ -8,6 +8,7 @@ const useNewForm = <T extends { [key: string]: any }>(
   serverData?: object,
 ) => {
   const [form, setForm] = useState(initialValues);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const { errors, validateAll, validate, isInvalid } = useValidateForm(
     form,
     validationSchema!,
@@ -41,7 +42,10 @@ const useNewForm = <T extends { [key: string]: any }>(
     const { name, value } = target;
 
     setForm((prev) => ({ ...prev, [name]: value }));
-    validate(name!, value);
+
+    if (isFormSubmitted) {
+      validate(name!, value);
+    }
   };
 
   return {
@@ -51,6 +55,8 @@ const useNewForm = <T extends { [key: string]: any }>(
     errors,
     validateAll,
     isInvalid,
+    setIsFormSubmitted,
+    isFormSubmitted,
   };
 };
 

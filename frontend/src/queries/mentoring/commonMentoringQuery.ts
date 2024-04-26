@@ -23,8 +23,7 @@ export const useDailyMentoringsQuery = ({
 }: GetDailyMentoringsParams) => {
 
   const queryKey = [...GET_DAILY_MENTORINGS_KEY,type,date,isPlatformUpdated]
-  
-  console.log(queryKey)
+
   return useQuery(
     queryKey,
     () => getDailyMentorings({ date, type }),

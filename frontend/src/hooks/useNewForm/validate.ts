@@ -1,38 +1,42 @@
 import { ValidateSchemaValue } from "@/types/validate";
-import useFormErrors from "./useFormErrors";
- 
+
 export const invalid = <T,>(value:T, validateInfo:ValidateSchemaValue)=>{
   const v = validate(value);
-  const {required, min, max, minLength} =validateInfo;
-
+  const {required, min, max, minLength, regex} =validateInfo;
   let errorMessage = null;
   
   if(required){
     if(!v.isRequired()){
-      errorMessage= required.message;
+      return required.message;
     }
     
   }  
 
   if(min){
     if(!v.isMin(Number(min.value!))){
-      errorMessage=  min.message;
+      return min.message;
     }
     
   }  
   if(max){
-    if(!v.isMax(max.value!)){
-      errorMessage= max.message;
+    if(typeof max.value === 'number' && !v.isMax(max.value!)){
+      return max.message;
     }
     
   }  
   if(minLength){
-    if(!v.isMinLength(minLength.value!)){
-      errorMessage= minLength.message;
+  
+    if(typeof minLength.value === 'number' && !v.isMinLength(minLength.value!)){
+      return minLength.message;
     }
-    
   } 
-  return errorMessage; 
+
+  if(regex) {
+    if(typeof regex.value !== 'number'&& !v.isRegexCorrect(regex.value!)){
+      return regex.message;
+    }
+  }
+  return null; 
 }
 
   export const validate = <T,>(value: T) => {
