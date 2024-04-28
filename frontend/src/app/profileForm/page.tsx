@@ -79,12 +79,12 @@ function ProfileFormPage() {
     },
     disability: {
       required: {
-        message: '값이 필요합니다.',
+        message: '장애 분류를 선택해주세요.',
       },
     },
     employmentStatus: {
       required: {
-        message: '취업 상탤를 입력해주세요',
+        message: '취업 상태를 입력해주세요',
       },
     },
   };
@@ -366,7 +366,7 @@ function ProfileFormPage() {
                   value={form.desiredJob}
                   outline
                   maxLength={10}
-                  width="60%"
+                  width="100%"
                   placeholder="정확한 직무를 입력해주세요. 10자 내외."
                   onChange={handleFormValueChange}
                   invalid={isInvalid('desiredJob')}

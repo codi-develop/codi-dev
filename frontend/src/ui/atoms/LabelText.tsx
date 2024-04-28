@@ -34,7 +34,7 @@ export function LabelText({
         <StyledLabelText>{text}</StyledLabelText>
         <Typography
           variant="div"
-          color={theme.colors.gray.main}
+          color={theme.colors.gray.dark}
           {...{
             marginLeft: '10px',
             [device('tablet')]: {
