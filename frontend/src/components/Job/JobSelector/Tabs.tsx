@@ -34,7 +34,7 @@ function Tabs({
                 ? theme.colors.primary.main
                 : theme.colors.white
             }
-            width="20%"
+            width="25%"
             hoverDisabled
             {...{
               [device('tablet')]: {
