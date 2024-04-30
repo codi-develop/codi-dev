@@ -53,6 +53,7 @@ const useNewForm = <T extends { [key: string]: any }>(
     setForm,
     handleFormValueChange,
     errors,
+    validate,
     validateAll,
     isInvalid,
     setIsFormSubmitted,

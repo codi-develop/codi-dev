@@ -33,6 +33,8 @@ import { ValidateSchema } from '@/types/validate';
 import useNewForm from '@/hooks/useNewForm/useNewForm';
 import FormInput from '@/ui/molecules/Form/FormInput';
 import { setCurrentModal } from '@/features/modal/modalSlice';
+import { validate } from '@/hooks/useNewForm/validate';
+import FormErrorContainer from '@/ui/molecules/Form/FormErrorContainer';
 
 const GENDER_LIST = [
   { name: '남자', key: 'MAN' },
@@ -94,6 +96,7 @@ function SignUpPage() {
   const {
     form,
     handleFormValueChange,
+    validate,
     validateAll,
     isInvalid,
     errors,
@@ -184,39 +187,51 @@ function SignUpPage() {
             helpText="영어, 숫자를 포함, 특수문자를 제외한 4 - 12 자리의 아이디를 입력해주세요."
           >
             <FlexBox direction="column" alignItems="flex-start" rowGap="10px">
-              <FlexBox>
-                <IconInputContainer iconComponent={<IdIcon />}>
-                  <Label htmlFor="id" text="아이디" />
-                  <FormInput
-                    id="id"
-                    name="id"
-                    onChange={handleFormValueChange}
-                    value={form.id}
-                    invalid={
-                      isInvalid('id') ||
-                      (isInvalid('id') && isIdDuplicated === true)
-                    }
-                    outline
-                    errorMessage={errors?.id}
-                  />
-                </IconInputContainer>
+              <FormErrorContainer
+                errorMessage={
+                  isIdDuplicated === true
+                    ? '아이디가 중복되었습니다. 다른 아이디를 입력해주세요.'
+                    : '' || errors?.id!
+                }
+              >
+                <FlexBox>
+                  <IconInputContainer iconComponent={<IdIcon />}>
+                    <Label htmlFor="id" text="아이디" />
 
-                <Button
-                  onClick={checkDuplicateId}
-                  width="30%"
-                  variant="square"
-                  type="button"
-                  {...{ marginLeft: '10px' }}
-                  disabled={isInvalid('id')}
-                >
-                  중복확인
-                </Button>
-              </FlexBox>
-              <div>
-                {isIdDuplicated === true &&
-                  '아이디가 중복되었습니다. 다른 아이디를 입력해주세요.'}
-                {isIdDuplicated === false && '사용할 수 있는 아이디 입니다.'}
-              </div>
+                    <FormInput
+                      id="id"
+                      name="id"
+                      onChange={(e) => {
+                        handleFormValueChange(e);
+                        validate(e.target.name, e.target.value);
+                      }}
+                      value={form.id}
+                      invalid={
+                        isInvalid('id') ||
+                        (isInvalid('id') && isIdDuplicated === true)
+                      }
+                      outline
+                    />
+                  </IconInputContainer>
+
+                  <Button
+                    onClick={checkDuplicateId}
+                    width="30%"
+                    variant="square"
+                    type="button"
+                    {...{ marginLeft: '10px' }}
+                    disabled={isInvalid('id') || form.id === ''}
+                  >
+                    중복확인
+                  </Button>
+                </FlexBox>
+              </FormErrorContainer>
+
+              {isIdDuplicated === false && (
+                <Typography variant="div">
+                  사용할 수 있는 아이디 입니다.
+                </Typography>
+              )}
             </FlexBox>
           </LabelBox>
 
