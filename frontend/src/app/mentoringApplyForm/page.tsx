@@ -99,7 +99,7 @@ function MentoringApplyFormPage() {
     setIsFormSubmitted(true);
 
     if (isValid) {
-      // mutation.mutate(form!);
+      mutation.mutate(form!);
       return;
     }
 
