@@ -36,7 +36,7 @@ const StyledAppBar = styled.nav({
   alignItems: 'center',
   justifyContent: 'space-between',
   top: '0',
-  zIndex: '999',
+  zIndex: '998',
   height: '59px',
   backgroundColor: theme.colors.white,
   borderBottom: `1px solid ${theme.colors.gray.main}`,

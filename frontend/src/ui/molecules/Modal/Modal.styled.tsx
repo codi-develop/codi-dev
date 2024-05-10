@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 export const ModalOverlay = styled(Overlay)({
   backgroundColor: 'rgba(0,0,0,0.4)',
-  zIndex: 1,
+  zIndex: 999,
   cursor: 'default',
 });
 
@@ -14,7 +14,7 @@ export const ModalContainer = styled.div({
   top: '20%',
   left: '50%',
   transform: 'translate(-50%, 0)',
-  zIndex: 2,
+  zIndex: 1000,
   boxShadow: '0 2px 6px 0 rgba(0, 0, 0, 0.04)',
   cursor: 'default',
 
