@@ -11,7 +11,7 @@ declare const window: WindowWithGA;
 
 export default function GoogleAnalyticsWithLibrary() {
   useEffect(() => {
-    if (!window.GA_INITIALIZED) {
+    if (!window.GA_INITIALIZED && process.env.NODE_ENV === 'production') {
       initializeGA();
       window.GA_INITIALIZED = true;
     }
