@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import Label from '@/ui/atoms/Label';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 
 const StyledNewNotificationBadge = styled.div(({}: {}) => ({
   position: 'absolute',

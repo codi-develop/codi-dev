@@ -1,9 +1,10 @@
 import { InputProps } from '@/types/ui';
 import Input from '@/ui/atoms/Input';
 import FormErrorContainer from './FormErrorContainer';
+import { InputHTMLAttributes } from 'react';
 
 type StyledInputProps = React.DetailedHTMLProps<
-  React.InputHTMLAttributes<HTMLInputElement>,
+  InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
 >;
 

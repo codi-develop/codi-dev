@@ -43,7 +43,6 @@ const Button = styled.button(
       justifyContent: 'center',
       alignItems: 'center',
       cursor: 'pointer',
-      outline: 'none',
       ':disabled': {
         backgroundColor: theme.colors.white,
         color: theme.colors.gray.light,

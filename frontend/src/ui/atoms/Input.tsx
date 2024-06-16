@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import theme from '@/ui/theme';
-import { InputProps } from '@/types/ui';
+import { InputProps, InputPropsContainsHtmlAttribute } from '@/types/ui';
 
 export const borderStyle = (
   invalid: boolean | undefined,
@@ -13,7 +13,11 @@ export const borderStyle = (
   return theme.colors.gray.light;
 };
 
-const Input = styled.input(
+const Input = (props: InputPropsContainsHtmlAttribute) => (
+  <StyledInput autoComplete="off" {...props} />
+);
+
+const StyledInput = styled.input(
   ({ width, outline, invalid, ...rest }: InputProps) => ({
     width: width ?? '100%',
     position: 'relative',
@@ -28,7 +32,6 @@ const Input = styled.input(
     '::placeholder': {
       color: theme.colors.gray.dark,
     },
-
     ...rest,
   }),
 );

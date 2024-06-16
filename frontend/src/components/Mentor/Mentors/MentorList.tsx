@@ -14,6 +14,7 @@ import Header from '@/components/Profile/ProfileCard/Header';
 import Content from '@/components/Profile/ProfileCard/Content';
 import Footer from '@/components/Profile/ProfileCard/Footer';
 import dynamicColor from '@/ui/dynamicColor';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 
 function MentorList({ mentors }: { mentors: Mentor[] }) {
   const router = useRouter();
@@ -53,10 +54,17 @@ function MentorList({ mentors }: { mentors: Mentor[] }) {
         return (
           <ProfileCard key={mentorId} {...mentor}>
             <Header.Container>
-              <Header.Like mentorId={mentorId} favorites={favoriteIds} />
+              <Header.Like
+                mentorId={mentorId}
+                mentorName={mentor.name}
+                favorites={favoriteIds}
+              />
             </Header.Container>
             <Content.Container>
-              <Content.Avatar src={mentor.imgUrl} />
+              <Content.Avatar
+                src={mentor.imgUrl}
+                alt={`${mentor.name} 멘토 의 프로필 이미지`}
+              />
               <Content.Name name={mentor.name!} />
               <Content.Job job={mentor.job!} />
               <Content.Rating star={mentor.star!} mentees={mentor.mentees!} />
@@ -68,7 +76,12 @@ function MentorList({ mentors }: { mentors: Mentor[] }) {
             </Content.Container>
 
             <Footer.Container>
+              <InvisibleLabel
+                htmlFor={mentor.id!.toString()}
+                text={`${mentor.name!} 멘토, 별점 ${mentor.star}개, ${mentor.job}, ${mentor.disability}, ${mentor.severity}, ${mentor.career} 프로필 보기`}
+              />
               <Button
+                id={mentor.id!.toString()}
                 onClick={() =>
                   router.push(
                     `/mentorProfile?mentorId=${mentorId!}&mentoringApply=${true}`,

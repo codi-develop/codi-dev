@@ -14,7 +14,7 @@ function AppBarTab() {
       justifyContent="space-between"
       {...{ height: '100%', maxWidth: '50%' }}
     >
-      <Link href="/">
+      <Link href="/" aria-label="홈으로 이동">
         <Logo width="108px" height="26px" />
       </Link>
 

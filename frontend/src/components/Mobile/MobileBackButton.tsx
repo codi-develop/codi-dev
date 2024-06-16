@@ -1,6 +1,6 @@
 'use client';
 
-import Label from '@/ui/atoms/Label';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 import { device } from '@/ui/theme';
 import styled from '@emotion/styled';
 import Back from '@icons/mobile/appbar/back.svg';
@@ -10,7 +10,7 @@ const MobileBackButton = () => {
   const router = useRouter();
   return (
     <StyledMobileBackButton id="mobileBackButton" onClick={() => router.back()}>
-      <Label htmlFor="mobileBackButton" text="뒤로가기" />
+      <InvisibleLabel htmlFor="mobileBackButton" text="뒤로가기" />
       <Back />
     </StyledMobileBackButton>
   );

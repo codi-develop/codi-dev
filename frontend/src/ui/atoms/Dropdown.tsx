@@ -48,7 +48,6 @@ function Dropdown({
           onClick={setDropdownContentPosition}
           variant="square"
           type="button"
-          role="tab"
           hoverDisabled
         >
           <Truncate>{selectedCategory || title}</Truncate>

@@ -38,7 +38,9 @@ export type ThemeColors =
 export type ThemeFontSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 export type ThemeFontWeight = 'black' | 'extraBold' | 'bold' | 'regular';
 
-export interface InputProps {
+export type InputPropsContainsHtmlAttribute = InputProps & InputHTMLAttributes<HTMLInputElement>;
+
+export interface InputProps  {
   width?: string;
   outline?: boolean;
   invalid?: boolean | undefined;
@@ -102,4 +104,11 @@ export interface DropdownProps {
   left?: boolean;
   isReset?:boolean;
   setSelectedCategory: (category: T) => void;
+}
+
+export interface LabelProps { htmlFor: string; text: string }
+
+export interface FormLabelProps extends LabelProps {
+  helpText?:string;
+  labelColor?:string;
 }

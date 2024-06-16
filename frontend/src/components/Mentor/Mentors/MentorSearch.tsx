@@ -1,11 +1,5 @@
 import Search from '@icons/common/search.svg';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import Dropdown from '@/ui/atoms/Dropdown';
 import IconInputContainer from '@/ui/molecules/Input/IconInput';
 import FlexBox from '@/ui/atoms/FlexBox';
@@ -14,8 +8,8 @@ import Button from '@/ui/atoms/Button';
 import theme, { device } from '@/ui/theme';
 import { CAREERS, DISABILITIES, JOBS } from '@/constants';
 import { GetMentorsParameters } from '@/types/api/mentor';
-import Labeled from '@/ui/atoms/Labeled';
 import { SetState } from '@/index';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 
 function MentorSearch({
   query,
@@ -90,18 +84,21 @@ function MentorSearch({
           },
         }}
       >
-        <Labeled id="search-mentor" text="원하는 멘토를 검색하세요">
-          <IconInputContainer iconComponent={<Search />}>
-            <Input
-              id="search-mentor"
-              value={query.keyword}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setQuery({ ...query, keyword: e.target.value })
-              }
-              outline
-            />
-          </IconInputContainer>
-        </Labeled>
+        <InvisibleLabel
+          htmlFor="search-mentor"
+          text="원하는 멘토를 검색하세요"
+        />
+        <IconInputContainer iconComponent={<Search />}>
+          <Input
+            id="search-mentor"
+            value={query.keyword}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setQuery({ ...query, keyword: e.target.value })
+            }
+            outline
+          />
+        </IconInputContainer>
+
         <Button
           onClick={() => {
             setSearched(JSON.stringify(query));

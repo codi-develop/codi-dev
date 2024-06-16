@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Button, DayProps, useDayRender } from 'react-day-picker';
-import Label from '@/ui/atoms/Label';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 import { accessibleFormattedDate, formattedDate } from '@/utils/dateFormat';
 
 export function CustomDay(props: DayProps) {
@@ -25,7 +25,7 @@ export function CustomDay(props: DayProps) {
 
   return (
     <>
-      <Label htmlFor={id} text={accessibleFormattedDate(props.date)} />
+      <InvisibleLabel htmlFor={id} text={accessibleFormattedDate(props.date)} />
       <Button
         id={id}
         {...dayRender.buttonProps}

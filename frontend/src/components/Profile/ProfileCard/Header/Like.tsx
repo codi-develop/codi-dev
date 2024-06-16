@@ -9,9 +9,11 @@ import { useRouter } from 'next/navigation';
 
 function Like({
   mentorId,
+  mentorName,
   favorites,
 }: {
   mentorId?: number;
+  mentorName?: string;
   favorites?: number[];
 }) {
   const [localFavoriteState, setLocalFavoriteState] = useState(false);
@@ -45,6 +47,7 @@ function Like({
   }, [favorites]);
   return (
     <StyledLikeButton
+      id={mentorId?.toString()}
       onClick={toggleLikeMentor}
       variant="round"
       width="48px"
@@ -52,6 +55,7 @@ function Like({
         localFavoriteState ? theme.colors.secondary.normal : theme.colors.white
       }
       localFavoriteState={localFavoriteState}
+      aria-label={`${mentorName!} 멘토 좋아요 누르기`}
       hoverDisabled
     >
       {localFavoriteState ? <FilledLike /> : <EmptyLike />}

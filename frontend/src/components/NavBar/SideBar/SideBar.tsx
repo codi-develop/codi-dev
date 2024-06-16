@@ -9,6 +9,7 @@ import useSideBar from '@/hooks/useSideBar';
 import { SideNavigator } from '@/ui/atoms/Navigator';
 import { keyframes } from '@emotion/css';
 import { fadeIn } from '@/ui/molecules/Modal/Modal.styled';
+import Typography from '@/ui/atoms/Typography';
 
 interface SideBarSideNavigator {
   iconComponent?: React.JSX.Element;
@@ -67,8 +68,16 @@ function SideBar({
                     {nestedParent === href && nestedParentIconComponent}
                     {nestedParent !== href &&
                       (current === href ? currentIconComponent : iconComponent)}
-
-                    {name}
+                    <Typography
+                      variant="div"
+                      color={
+                        current === href
+                          ? theme.colors.white
+                          : theme.colors.text.strong
+                      }
+                    >
+                      {name}
+                    </Typography>
                     {adornment}
                   </FlexBox>
                 </SideNavigator>

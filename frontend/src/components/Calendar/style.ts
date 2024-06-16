@@ -28,7 +28,7 @@ export const CustomContentDates = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  size: ${theme.fonts.size.md};
+  font-size: ${theme.fonts.size.md}px;
   font-weight: ${theme.fonts.weight.regular};
   margin-bottom: 39px;
 `;

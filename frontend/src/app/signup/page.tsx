@@ -23,7 +23,7 @@ import { DATE } from '@/constants';
 import { handleApiCallback } from '@/utils/api';
 import { SignUpBody } from '@/types/api/sign';
 
-import Label from '@/ui/atoms/Label';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 import { setIsLoggedIn } from '@/features/auth/authSlice';
 import Markdown from 'react-markdown';
 import { privateData, useTerm } from '@/components/Terms/terms';
@@ -196,7 +196,7 @@ function SignUpPage() {
               >
                 <FlexBox>
                   <IconInputContainer iconComponent={<IdIcon />}>
-                    <Label htmlFor="id" text="아이디" />
+                    <InvisibleLabel htmlFor="id" text="아이디" />
 
                     <FormInput
                       id="id"
@@ -240,7 +240,7 @@ function SignUpPage() {
             helpText="영어, 숫자, 특수기호가 포함된 8자리 이상 비밀번호를 입력해주세요."
           >
             <IconInputContainer iconComponent={<PasswordIcon />}>
-              <Label htmlFor="password" text="비밀번호" />
+              <InvisibleLabel htmlFor="password" text="비밀번호" />
               <FormInput
                 id="password"
                 name="password"
@@ -255,7 +255,7 @@ function SignUpPage() {
           </LabelBox>
           <LabelBox text="이름">
             <IconInputContainer iconComponent={<TagIcon />}>
-              <Label htmlFor="name" text="이름" />
+              <InvisibleLabel htmlFor="name" text="이름" />
               <FormInput
                 id="name"
                 name="name"
@@ -292,7 +292,7 @@ function SignUpPage() {
 
           <LabelBox text="생년 월일">
             <FlexBox columnGap="10px">
-              <Label htmlFor="birthYear" text="생년월일 연도" />
+              <InvisibleLabel htmlFor="birthYear" text="생년월일 연도" />
               <Dropdown
                 id="birthYear"
                 width="100%"
@@ -301,7 +301,7 @@ function SignUpPage() {
                 setSelectedCategory={(year) => setBirth({ ...birth, year })}
                 title="연도"
               />
-              <Label htmlFor="birthMonth" text="생년월일 월" />
+              <InvisibleLabel htmlFor="birthMonth" text="생년월일 월" />
               <Dropdown
                 id="birthMonth"
                 width="100%"
@@ -310,7 +310,7 @@ function SignUpPage() {
                 setSelectedCategory={(month) => setBirth({ ...birth, month })}
                 title="월"
               />
-              <Label htmlFor="birthDay" text="생년월일 일" />
+              <InvisibleLabel htmlFor="birthDay" text="생년월일 일" />
               <Dropdown
                 id="birthDay"
                 width="100%"
@@ -323,7 +323,7 @@ function SignUpPage() {
           </LabelBox>
           <LabelBox text="이메일">
             <FlexBox columnGap="10px">
-              <Label htmlFor="email" text="이메일" />
+              <InvisibleLabel htmlFor="email" text="이메일" />
               <FormInput
                 id="email"
                 name="email"
@@ -334,7 +334,7 @@ function SignUpPage() {
                 errorMessage={errors?.email}
               />
               @
-              <Label htmlFor="emailType" text="이메일 유형" />
+              <InvisibleLabel htmlFor="emailType" text="이메일 유형" />
               <Dropdown
                 id="emailType"
                 selectedCategory={emailType}

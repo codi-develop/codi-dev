@@ -28,7 +28,7 @@ import { handleApiCallback } from '@/utils/api';
 import JobSelector from '@/components/Job/JobSelector/JobSelector';
 import { selectUser, setUser } from '@/features/user/userSlice';
 import { RegisterProfileResponse } from '@/types/api/profile';
-import Label from '@/ui/atoms/Label';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 import useGetProfileQuery from '@/queries/profileQuery';
 import LabelBox from '@/ui/molecules/LabelBox';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
@@ -230,7 +230,7 @@ function ProfileFormPage() {
                     />
                   </div>
                 </IconInputContainer>
-                <Label
+                <InvisibleLabel
                   htmlFor="profileImage"
                   text="프로필 사진 등록 (선택사항입니다)"
                 />
@@ -251,7 +251,7 @@ function ProfileFormPage() {
             <LabelBox text="장애 분류">
               <FlexBox direction="column" rowGap="10px">
                 <FlexBox columnGap="10px">
-                  <Label htmlFor="disability" text="장애 분류" />
+                  <InvisibleLabel htmlFor="disability" text="장애 분류" />
                   <FormErrorContainer errorMessage={errors?.disability!}>
                     <Dropdown
                       id="disability"
@@ -306,7 +306,7 @@ function ProfileFormPage() {
             </LabelBox>
             <LabelBox text="학력" helpText="(선택)">
               <FlexBox columnGap="10px">
-                <Label
+                <InvisibleLabel
                   htmlFor="bigEducation"
                   text="최종 학력 (선택사항입니다)"
                 />
@@ -322,7 +322,7 @@ function ProfileFormPage() {
                   categories={['초등학교', '중학교', '고등학교', '대학교']}
                 />
                 <IconInputContainer iconComponent={<Search />}>
-                  <Label htmlFor="education" text="대학교 입력" />
+                  <InvisibleLabel htmlFor="education" text="대학교 입력" />
                   <Input
                     disabled={bigEducationCategory !== '대학교'}
                     id="education"
@@ -345,7 +345,7 @@ function ProfileFormPage() {
                   },
                 }}
               >
-                <Label htmlFor="job" text="직무 분류" />
+                <InvisibleLabel htmlFor="job" text="직무 분류" />
                 <FormErrorContainer errorMessage={errors?.job!}>
                   <JobSelector
                     id="job"
@@ -359,7 +359,7 @@ function ProfileFormPage() {
                     width="100%"
                   />
                 </FormErrorContainer>
-                <Label htmlFor="desiredJob" text="희망 직무" />
+                <InvisibleLabel htmlFor="desiredJob" text="희망 직무" />
                 <FormInput
                   id="desiredJob"
                   name="desiredJob"
@@ -380,7 +380,7 @@ function ProfileFormPage() {
               </FlexBox>
             </LabelBox>
             <LabelBox text="취업 상태">
-              <Label htmlFor="employmentStatus" text="취업 상태" />
+              <InvisibleLabel htmlFor="employmentStatus" text="취업 상태" />
               <FormErrorContainer errorMessage={errors?.employmentStatus!}>
                 <Dropdown
                   id="employmentStatus"
@@ -400,7 +400,7 @@ function ProfileFormPage() {
               </FormErrorContainer>
             </LabelBox>
             <LabelBox text="자기 소개">
-              <Label htmlFor="introduction" text="자기 소개" />
+              <InvisibleLabel htmlFor="introduction" text="자기 소개" />
               <FormTextarea
                 id="introduction"
                 name="introduction"

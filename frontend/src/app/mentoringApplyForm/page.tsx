@@ -15,7 +15,7 @@ import Textarea from '@/ui/atoms/Textarea';
 import Typography from '@/ui/atoms/Typography';
 import ChipButton from '@/ui/atoms/ChipButton';
 import { useApplyMentoringMutation } from '@/queries/mentoring/menteeMentoringQuery';
-import Label from '@/ui/atoms/Label';
+import InvisibleLabel from '@/ui/atoms/InvisibleLabel';
 import { useDispatch } from 'react-redux';
 import { setCurrentModal, setModalState } from '@/features/modal/modalSlice';
 import SinglePageLayout from '@/components/Layout/SinglePageLayout';
@@ -189,7 +189,7 @@ function MentoringApplyFormPage() {
             </CalendarContainer>
           </LabelBox>
           <LabelBox text="하고싶은 말" helpText="(최소 50 글자)">
-            <Label
+            <InvisibleLabel
               htmlFor="applicationReason"
               text="하고싶은 말 (최소 50 글자)"
             />
