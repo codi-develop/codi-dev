@@ -3,9 +3,11 @@ import { getTokenFormLocalStorage } from '@/utils/auth';
 
 export const BASE_URL = 'https://api.codisabled.com/api/v1';
 
+export const TEST_URL = 'http://ec2-3-38-225-110.ap-northeast-2.compute.amazonaws.com:8080/api/v1/';
+
 const instance = () => {
   return axios.create({
-    baseURL: BASE_URL,
+    baseURL: TEST_URL,
     headers: {
       Authorization: getTokenFormLocalStorage()?.access.value
         ? getTokenFormLocalStorage()?.access.value
