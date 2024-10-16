@@ -44,11 +44,11 @@ function JobRank() {
           </Button>
         )}
         {isJobRanksQuerySuccess &&
-          (jobRanks?.infos.length === 0 ? (
+          (jobRanks?.infos?.length === 0 ? (
             <div>해당 장애로 취업자의 정보가 없습니다. </div>
           ) : (
             <FlexBox justifyContent="center" direction="column">
-              {jobRanks?.infos.map(({ job, ranking, ratio }, index) => (
+              {jobRanks?.infos?.map(({ job, ranking, ratio }, index) => (
                 <Bar key={index} first={index === 0}>
                   <FlexBox alignItems="center" justifyContent="space-between">
                     <Typography
