@@ -7,7 +7,7 @@ export const TEST_URL = 'http://ec2-3-38-225-110.ap-northeast-2.compute.amazonaw
 
 const instance = () => {
   return axios.create({
-    baseURL: TEST_URL,
+    baseURL: BASE_URL,
     headers: {
       Authorization: getTokenFormLocalStorage()?.access.value
         ? getTokenFormLocalStorage()?.access.value
