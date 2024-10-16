@@ -35,7 +35,7 @@ export interface GetMentoringAppliesResponseData {
   mentoringId: number;
   menteeInfo: {
     profileId: number;
-    name: string;
+    nickname: string;
     employmentStatus: string;
     desiredJob: string;
     disability: string;

@@ -40,7 +40,7 @@ function Notification() {
           }) => {
             return {
               profileId: menteeInfo.profileId,
-              userName: menteeInfo.name,
+              userName: menteeInfo.nickname,
               content: `께서 멘토링을 신청했습니다.`,
               date: applicationDate,
               mentoringId,
