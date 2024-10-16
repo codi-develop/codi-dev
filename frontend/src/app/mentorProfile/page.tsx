@@ -16,7 +16,7 @@ function MentorProfilePage() {
   const mentorId = parseInt(param.get('mentorId')!);
   const isMentoringApplied = param.get('mentoringId');
 
-  const { data: mentor, isSuccess } = useGetMentorQuery(mentorId);
+  const { data: mentor, isSuccess } = useGetMentorQuery({ mentorId });
   return (
     isSuccess && (
       <SinglePageLayout>

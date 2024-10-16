@@ -32,6 +32,8 @@ import useNewForm from '@/hooks/useNewForm/useNewForm';
 import FormInput from '@/ui/molecules/Form/FormInput';
 import FormErrorContainer from '@/ui/molecules/Form/FormErrorContainer';
 import FormTextarea from '@/ui/molecules/Form/FormTextarea';
+import { selectUser } from '@/features/user/userSlice';
+import { useSelector } from 'react-redux';
 
 function MentorRegisterForm() {
   const router = useRouter();
@@ -88,7 +90,9 @@ function MentorRegisterForm() {
     },
   };
 
-  const { data } = useGetMentorQuery();
+  const isMentor = useSelector(selectUser).isMentor;
+
+  const { data } = useGetMentorQuery({ isMentor });
 
   const isCertificate = data?.fileUrl;
 
