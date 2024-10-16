@@ -48,9 +48,8 @@ function ProfileFormPage() {
   const { data, isFetching } = useGetProfileQuery();
 
   const initFormValues = {
-    introduction: '',
+    nickname: '',
     desiredJob: '',
-    job: '',
     education: '',
     disability: '',
     employmentStatus: '',
@@ -58,23 +57,14 @@ function ProfileFormPage() {
   };
 
   const validationSchema: ValidateSchema = {
-    introduction: {
+    nickname: {
       required: {
-        message: '자기소개를 입력해주세요.',
-      },
-      minLength: {
-        message: '50자 이상 입력해주세요.',
-        value: 50,
+        message: '닉네임을 입력해주세요',
       },
     },
     desiredJob: {
       required: {
         message: '희망 직무를 입력해주세요.',
-      },
-    },
-    job: {
-      required: {
-        message: '직무 카테고리를 선택해주세요.',
       },
     },
     disability: {
@@ -108,8 +98,8 @@ function ProfileFormPage() {
     if (isEdit && data) {
       const { job, education } = data;
       setJob(job!);
-      if (education === ('초등학교' || '중학교' || '고등학교')) {
-        setBigEducationCategory(education);
+      if (education !== '대학교') {
+        setBigEducationCategory(education!);
         form.education = '';
       }
     }
@@ -216,6 +206,25 @@ function ProfileFormPage() {
         </Typography>
         <form onSubmit={(e) => handleProfileSubmit(e)}>
           <FlexBox direction="column" rowGap="50px">
+            <LabelBox text="별명">
+              <FormInput
+                id="nickname"
+                name="nickname"
+                value={form.nickname}
+                outline
+                maxLength={10}
+                width="100%"
+                placeholder="별명을 입력해주세요. 10자 내외."
+                onChange={handleFormValueChange}
+                invalid={isInvalid('nickname')}
+                {...{
+                  [device('tablet')]: {
+                    width: '100%',
+                  },
+                }}
+                errorMessage={errors?.nickname}
+              />
+            </LabelBox>
             <LabelBox text="프로필 사진" helpText="(선택)">
               <FlexBox justifyContent="space-between">
                 <IconInputContainer iconComponent={<ProfileImage />}>
@@ -304,37 +313,6 @@ function ProfileFormPage() {
                 ))}
               </FlexBox>
             </LabelBox>
-            <LabelBox text="학력" helpText="(선택)">
-              <FlexBox columnGap="10px">
-                <InvisibleLabel
-                  htmlFor="bigEducation"
-                  text="최종 학력 (선택사항입니다)"
-                />
-                <Dropdown
-                  id="bigEducation"
-                  width="40%"
-                  type="form"
-                  title="최종 학력"
-                  selectedCategory={bigEducationCategory}
-                  setSelectedCategory={(bigEducation) =>
-                    setBigEducationCategory(bigEducation)
-                  }
-                  categories={['초등학교', '중학교', '고등학교', '대학교']}
-                />
-                <IconInputContainer iconComponent={<Search />}>
-                  <InvisibleLabel htmlFor="education" text="대학교 입력" />
-                  <Input
-                    disabled={bigEducationCategory !== '대학교'}
-                    id="education"
-                    name="education"
-                    placeholder="학교명 검색"
-                    value={form.education}
-                    outline
-                    onChange={handleFormValueChange}
-                  />
-                </IconInputContainer>
-              </FlexBox>
-            </LabelBox>
             <LabelBox text="희망 직무">
               <FlexBox
                 columnGap="10px"
@@ -350,9 +328,12 @@ function ProfileFormPage() {
                   <JobSelector
                     id="job"
                     invalid={isInvalid('job')}
-                    selected={form.job}
-                    setSelected={(job) =>
-                      handleFormValueChange({ name: 'job', value: job })
+                    selected={form.desiredJob}
+                    setSelected={(desiredJob) =>
+                      handleFormValueChange({
+                        name: 'desiredJob',
+                        value: desiredJob,
+                      })
                     }
                     open={openJobSelector}
                     setOpen={setOpenJobSelector}
@@ -360,25 +341,9 @@ function ProfileFormPage() {
                   />
                 </FormErrorContainer>
                 <InvisibleLabel htmlFor="desiredJob" text="희망 직무" />
-                <FormInput
-                  id="desiredJob"
-                  name="desiredJob"
-                  value={form.desiredJob}
-                  outline
-                  maxLength={10}
-                  width="100%"
-                  placeholder="정확한 직무를 입력해주세요. 10자 내외."
-                  onChange={handleFormValueChange}
-                  invalid={isInvalid('desiredJob')}
-                  {...{
-                    [device('tablet')]: {
-                      width: '100%',
-                    },
-                  }}
-                  errorMessage={errors?.desiredJob}
-                />
               </FlexBox>
             </LabelBox>
+
             <LabelBox text="취업 상태">
               <InvisibleLabel htmlFor="employmentStatus" text="취업 상태" />
               <FormErrorContainer errorMessage={errors?.employmentStatus!}>
@@ -398,18 +363,6 @@ function ProfileFormPage() {
                   categories={EMPLOYMENT_STATUSES}
                 />
               </FormErrorContainer>
-            </LabelBox>
-            <LabelBox text="자기 소개">
-              <InvisibleLabel htmlFor="introduction" text="자기 소개" />
-              <FormTextarea
-                id="introduction"
-                name="introduction"
-                placeholder="최소 50 글자"
-                value={form.introduction}
-                onChange={handleFormValueChange}
-                invalid={isInvalid('introduction')}
-                errorMessage={errors?.introduction!}
-              />
             </LabelBox>
             <FlexBox
               direction="column"
