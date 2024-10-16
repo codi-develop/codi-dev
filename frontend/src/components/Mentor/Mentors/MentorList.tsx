@@ -77,11 +77,11 @@ function MentorList({ mentors }: { mentors: Mentor[] }) {
 
             <Footer.Container>
               <InvisibleLabel
-                htmlFor={mentor.id!.toString()}
+                htmlFor={mentorId!.toString()}
                 text={`${mentor.name!} 멘토, 별점 ${mentor.star}개, ${mentor.job}, ${mentor.disability}, ${mentor.severity}, ${mentor.career} 프로필 보기`}
               />
               <Button
-                id={mentor.id!.toString()}
+                id={mentorId!.toString()}
                 onClick={() =>
                   router.push(
                     `/mentorProfile?mentorId=${mentorId!}&mentoringApply=${true}`,

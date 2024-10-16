@@ -17,10 +17,10 @@ export interface GetMentorsParameters {
 }
 
 export interface GetRecommendationMentorsParameters {
-  disability: string;
-  firstJob: string;
-  secondJob: string;
-  thirdJob: string;
+  disability?: string;
+  firstJob?: string;
+  secondJob?: string;
+  thirdJob?: string;
 }
 
 export interface RegisterMentorResponse {

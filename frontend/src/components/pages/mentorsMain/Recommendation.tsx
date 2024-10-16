@@ -8,21 +8,29 @@ import Button from '@/ui/atoms/Button';
 import MentorList from '@/components/Mentor/Mentors/MentorList';
 import { useJobRanksQuery } from '@/queries/jobQuery';
 import { useGetRecommendationMentorsQuery } from '@/queries/mentorQuery';
-import ApplyAndShareButtons from './ApplyAndShareButtons';
 
 function Recommendation() {
   const router = useRouter();
   const isMainPage = !usePathname().includes('mentorsMain');
-  const { data: jobRanks } = useJobRanksQuery();
+  const { data: jobRanks, isSuccess } = useJobRanksQuery();
+
+  const recommendationMentorsQueryParams = () => {
+    if (!isSuccess || !jobRanks.infos) {
+      return undefined;
+    }
+
+    return {
+      disability: jobRanks.disability,
+      firstJob: jobRanks.infos[0].job,
+      secondJob: jobRanks.infos[1].job ?? '',
+      thirdJob: jobRanks.infos[2].job ?? '',
+    };
+  };
+
   const {
     data: recommendationMentors,
     isSuccess: isRecommendationMentorsSuccess,
-  } = useGetRecommendationMentorsQuery({
-    disability: jobRanks?.disability!,
-    firstJob: jobRanks?.infos[0]?.job!,
-    secondJob: jobRanks?.infos[1]?.job! ?? '',
-    thirdJob: jobRanks?.infos[2]?.job! ?? '',
-  });
+  } = useGetRecommendationMentorsQuery(recommendationMentorsQueryParams());
   return (
     <PageComponentLayout>
       <TitleSection

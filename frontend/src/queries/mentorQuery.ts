@@ -57,13 +57,14 @@ const useGetMentorsQuery = () => {
 };
 
 export const useGetRecommendationMentorsQuery = (
-  query: GetRecommendationMentorsParameters,
+  query?: GetRecommendationMentorsParameters,
 ) =>
   useQuery(
     GET_RECOMMENDATION_MENTORS_KEY,
     () => getRecommendationMentors(query!),
     {
       staleTime: STALE_TIME.SELDOM,
+      enabled: query !== undefined || query !== null
     },
   );
 
