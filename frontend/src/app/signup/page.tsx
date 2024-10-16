@@ -14,7 +14,7 @@ import IconInputContainer from '@/ui/molecules/Input/IconInput';
 import FlexBox from '@/ui/atoms/FlexBox';
 import Dropdown from '@/ui/atoms/Dropdown';
 import {
-  checkDuplicateId as postCheckDuplicateId,
+  checkDuplicatedEmail as postcheckDuplicatedEmail,
   signIn,
   signUp,
 } from '@/api/signApi';
@@ -44,29 +44,11 @@ const GENDER_LIST = [
 
 function SignUpPage() {
   const initialFormValues = {
-    birth: '',
     email: '',
-    id: '',
-    gender: '선택안함',
-    name: '',
     password: '',
   };
 
   const validationSchema: ValidateSchema = {
-    id: {
-      required: {
-        message: '아이디를 입력해주세요.',
-      },
-      regex: {
-        message: '올바른 아이디 형식이 아닙니다',
-        value: /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{4,12}$/,
-      },
-    },
-    birth: {
-      required: {
-        message: '생년월일을 입력해주세요.',
-      },
-    },
     email: {
       required: { message: '이메일을 입력해주세요' },
     },
@@ -77,11 +59,6 @@ function SignUpPage() {
       regex: {
         message: '올바른 비밀번호 형식이 아닙니다.',
         value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
-      },
-    },
-    name: {
-      required: {
-        message: '이름을 입력해주세요.',
       },
     },
   };
@@ -112,13 +89,12 @@ function SignUpPage() {
   const [checkUserTerm, setCheckUserTerm] = useState(false);
   const [checkPrivateDataTerm, setCheckPrivateDataTerm] = useState(false);
 
-  const checkDuplicateId = async () => {
-    const { data, status, errorMessage } = await postCheckDuplicateId<boolean>(
-      form.id,
-    );
+  const checkDuplicatedEmail = async () => {
+    const { data, status, errorMessage } =
+      await postcheckDuplicatedEmail<boolean>(form.email);
     handleApiCallback(
       status!,
-      () => setIsIdDuplicated(data === true),
+      () => setIsIdDuplicated(data),
       () => alert(`호출 실패 : ${errorMessage}`),
     );
   };
@@ -145,7 +121,7 @@ function SignUpPage() {
         status!,
         async () => {
           const { data } = await signIn({
-            id: form.id,
+            id: form.email,
             password: form.password,
           });
           if (data) dispatch(setIsLoggedIn(true));
@@ -155,18 +131,6 @@ function SignUpPage() {
       );
     }
   };
-
-  useEffect(() => {
-    handleFormValueChange({ name: 'gender', value: gender.key });
-  }, [gender]);
-
-  useEffect(() => {
-    const { year, month, day } = birth;
-    const stringifiedBirth = `${year}/${month < 10 ? '0' : ''}${month}/${
-      day < 10 ? '0' : ''
-    }${day}`;
-    handleFormValueChange({ name: 'birth', value: stringifiedBirth });
-  }, [birth]);
 
   return (
     <FormContainer>
@@ -182,145 +146,6 @@ function SignUpPage() {
 
       <form onSubmit={(e) => handleSubmit(e)}>
         <FlexBox direction="column" rowGap="50px">
-          <LabelBox
-            text="아이디"
-            helpText="영어, 숫자를 포함, 특수문자를 제외한 4 - 12 자리의 아이디를 입력해주세요."
-          >
-            <FlexBox direction="column" alignItems="flex-start" rowGap="10px">
-              <FormErrorContainer
-                errorMessage={
-                  isIdDuplicated === true
-                    ? '아이디가 중복되었습니다. 다른 아이디를 입력해주세요.'
-                    : '' || errors?.id!
-                }
-              >
-                <FlexBox>
-                  <IconInputContainer iconComponent={<IdIcon />}>
-                    <InvisibleLabel htmlFor="id" text="아이디" />
-
-                    <FormInput
-                      id="id"
-                      name="id"
-                      onChange={(e) => {
-                        handleFormValueChange(e);
-                        validate(e.target.name, e.target.value);
-                      }}
-                      value={form.id}
-                      invalid={
-                        isInvalid('id') ||
-                        (isInvalid('id') && isIdDuplicated === true)
-                      }
-                      outline
-                    />
-                  </IconInputContainer>
-
-                  <Button
-                    onClick={checkDuplicateId}
-                    width="30%"
-                    variant="square"
-                    type="button"
-                    {...{ marginLeft: '10px' }}
-                    disabled={isInvalid('id') || form.id === ''}
-                  >
-                    중복확인
-                  </Button>
-                </FlexBox>
-              </FormErrorContainer>
-
-              {isIdDuplicated === false && (
-                <Typography variant="div">
-                  사용할 수 있는 아이디 입니다.
-                </Typography>
-              )}
-            </FlexBox>
-          </LabelBox>
-
-          <LabelBox
-            text="비밀번호"
-            helpText="영어, 숫자, 특수기호가 포함된 8자리 이상 비밀번호를 입력해주세요."
-          >
-            <IconInputContainer iconComponent={<PasswordIcon />}>
-              <InvisibleLabel htmlFor="password" text="비밀번호" />
-              <FormInput
-                id="password"
-                name="password"
-                onChange={handleFormValueChange}
-                value={form.password}
-                invalid={isInvalid('password')}
-                type="password"
-                outline
-                errorMessage={errors?.password}
-              />
-            </IconInputContainer>
-          </LabelBox>
-          <LabelBox text="이름">
-            <IconInputContainer iconComponent={<TagIcon />}>
-              <InvisibleLabel htmlFor="name" text="이름" />
-              <FormInput
-                id="name"
-                name="name"
-                onChange={handleFormValueChange}
-                value={form.name}
-                invalid={isInvalid('name')}
-                outline
-                errorMessage={errors?.name}
-              />
-            </IconInputContainer>
-          </LabelBox>
-
-          <LabelBox text="성별">
-            <FlexBox columnGap="10px">
-              {GENDER_LIST.map((genderType) => (
-                <Button
-                  key={genderType.key}
-                  onClick={() => setGender(genderType)}
-                  width="100%"
-                  variant="square"
-                  color={
-                    genderType.name === gender.name
-                      ? theme.colors.primary.normal
-                      : theme.colors.white
-                  }
-                  type="button"
-                  outline
-                >
-                  {genderType.name}
-                </Button>
-              ))}
-            </FlexBox>
-          </LabelBox>
-
-          <LabelBox text="생년 월일">
-            <FlexBox columnGap="10px">
-              <InvisibleLabel htmlFor="birthYear" text="생년월일 연도" />
-              <Dropdown
-                id="birthYear"
-                width="100%"
-                categories={DATE.YEARS}
-                selectedCategory={birth.year!}
-                setSelectedCategory={(year) => setBirth({ ...birth, year })}
-                title="연도"
-              />
-              <InvisibleLabel htmlFor="birthMonth" text="생년월일 월" />
-              <Dropdown
-                id="birthMonth"
-                width="100%"
-                categories={DATE.MONTHS}
-                selectedCategory={birth.month!}
-                setSelectedCategory={(month) => setBirth({ ...birth, month })}
-                title="월"
-              />
-              <InvisibleLabel htmlFor="birthDay" text="생년월일 일" />
-              <Dropdown
-                id="birthDay"
-                width="100%"
-                categories={DATE.DAYS}
-                selectedCategory={birth.day!}
-                setSelectedCategory={(day) => setBirth({ ...birth, day })}
-                title="일"
-              />
-            </FlexBox>
-          </LabelBox>
           <LabelBox text="이메일">
             <FlexBox columnGap="10px">
               <InvisibleLabel htmlFor="email" text="이메일" />
@@ -344,7 +169,35 @@ function SignUpPage() {
                 title="gmail.com"
                 type="form"
               />
+              <Button
+                onClick={checkDuplicatedEmail}
+                width="30%"
+                variant="square"
+                type="button"
+                {...{ marginLeft: '10px' }}
+                disabled={isInvalid('id') || form.email === ''}
+              >
+                중복확인
+              </Button>
             </FlexBox>
+          </LabelBox>
+          <LabelBox
+            text="비밀번호"
+            helpText="영어, 숫자, 특수기호가 포함된 8자리 이상 비밀번호를 입력해주세요."
+          >
+            <IconInputContainer iconComponent={<PasswordIcon />}>
+              <InvisibleLabel htmlFor="password" text="비밀번호" />
+              <FormInput
+                id="password"
+                name="password"
+                onChange={handleFormValueChange}
+                value={form.password}
+                invalid={isInvalid('password')}
+                type="password"
+                outline
+                errorMessage={errors?.password}
+              />
+            </IconInputContainer>
           </LabelBox>
           <LabelBox text="이용약관">
             <FlexBox direction="column" rowGap="15px">

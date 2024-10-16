@@ -38,18 +38,19 @@ export const signIn = async <T>(
 export const signOut = () => {
   localStorage.removeItem('signin-token');
 };
-export const checkDuplicateId = async <T>(
-  id: string,
+export const checkDuplicatedEmail = async <T>(
+  email: string,
 ): Promise<CommonApiResponse<T>> => {
   try {
     const { data, status }: AxiosResponse<T> = await customAxios.get(
-      `/account/validate-id?id=${id}`,
+      `/account/validate-email?email=${email}`,
     );
     return { data, status };
   } catch (e: unknown) {
     return handleApiError(e);
   }
 };
+
 export const searchUniv = async () => {
   const URL =
     'https://career.go.kr/cnet/openapi/getOpenApi?apiKey=5ae9204a5c24d7c8d88317b2e1135255&svcType=api&svcCode=SCHOOL&contentType=json&gubun=elem_list';
