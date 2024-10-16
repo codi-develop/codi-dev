@@ -24,9 +24,7 @@ function MenteeProfileInformation({ profile }: { profile: MenteeProfile }) {
             gridTemplateColumns="repeat(auto-fit, minmax(300px, 2fr))"
             rowGap="10px"
           >
-            <ProfileLabelText name="이름" value={profile?.name} />
-            <ProfileLabelText name="최종학력" value={profile?.education} />
-            <ProfileLabelText name="나이" value={`${profile?.age}세`} />
+            <ProfileLabelText name="이름" value={profile?.nickname} />
             <ProfileLabelText name="희망직무" value={profile?.desiredJob} />
             <ProfileLabelText name="장애구분" value={profile?.disability} />
             <ProfileLabelText
@@ -57,19 +55,6 @@ function MenteeProfileInformation({ profile }: { profile: MenteeProfile }) {
             </FlexBox>
           </LabelBox>
         </FlexBox>
-        <LabelBox text="자기소개">
-          {profile?.introduction ? (
-            <Typography
-              variant="div"
-              lineHeight="21px"
-              {...{ whiteSpace: 'pre-wrap' }}
-            >
-              {profile?.introduction!}
-            </Typography>
-          ) : (
-            <Skeleton count={1} />
-          )}
-        </LabelBox>
       </FlexBox>
     </MyInfoCard>
   );

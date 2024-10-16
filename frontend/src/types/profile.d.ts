@@ -3,33 +3,27 @@ import { MentoringPlatform } from './mentoring';
 
 export interface MenteeProfile {
   id?: number;
+  nickname?: string;
   imgUrl?: string;
-  job?: string;
   desiredJob?: string;
-  education?: string;
   disability?: string;
   severity?: string;
-  introduction?: string;
   employmentStatus?: string;
-  name?: string;
-  age?: number;
   favorites?: [];
 }
 export interface Mentor extends MenteeProfile {
+  id?:number,
   mentorId?: number;
-  fileUrl?: null;
-  isCertificate?: boolean;
-  company?: string;
   career?: string;
-  jobName?: string;
-  inOffice?: boolean;
+  job?:string;
+  introduction?:string;
   star?: number;
   mentees?: number;
   applicationDate?: string;
   mentoringCategories?: string[];
   mentoringCount?:number;
   responseRate?:number;
-  futureScheduleCount?:number;
+  futureScheduleCount?: number;
 }
 
 export interface ProfileCardProps extends Mentor {

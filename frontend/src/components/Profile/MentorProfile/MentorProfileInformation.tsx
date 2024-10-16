@@ -23,15 +23,9 @@ function MentorProfileInformation({ mentor }: { mentor: Mentor }) {
             gridTemplateColumns="repeat(auto-fit, minmax(300px, 2fr))"
             rowGap="10px"
           >
-            <ProfileLabelText name="이름" value={mentor?.name} />
-            <ProfileLabelText name="최종학력" value={mentor?.education} />
-            <ProfileLabelText
-              name="나이"
-              value={`${mentor?.age?.toString()}세`}
-            />
+            <ProfileLabelText name="별명" value={mentor?.nickname} />
             <ProfileLabelText name="직무" value={mentor?.job} />
             <ProfileLabelText name="장애구분" value={mentor?.disability} />
-            <ProfileLabelText name="회사명" value={mentor?.company} />
             <ProfileLabelText name="중증도" value={mentor?.severity} />
             <ProfileLabelText name="경력" value={mentor?.career} />
           </Grid>

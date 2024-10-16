@@ -22,11 +22,10 @@ function MyInfoPage() {
         <ProfileCard width="328px" height="477px">
           <Content.Container>
             <Content.Avatar src={profile?.imgUrl} />
-            <Content.Name name={profile?.name!} />
+            <Content.Name name={profile?.nickname!} />
             <Content.EmploymentStatus
               employmentStatus={profile?.employmentStatus!}
             />
-            <Content.Job job={profile?.job!} />
           </Content.Container>
           <Footer.Container>
             <Button
@@ -38,7 +37,6 @@ function MyInfoPage() {
               프로필 수정하기
             </Button>
           </Footer.Container>
-          <ProfileStatusCard text="희망직무" value={profile?.desiredJob!} />
         </ProfileCard>
       </MenteeProfile>
     )
