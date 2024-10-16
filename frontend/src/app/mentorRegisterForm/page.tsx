@@ -44,21 +44,13 @@ function MentorRegisterForm() {
   const formData = new FormData();
 
   const initialFormValues = {
-    company: '',
     introduction: '',
-    jobName: '',
     job: '',
     career: '',
-    inOffice: false,
     mentoringCategories: ['면접대비'],
   };
 
   const validationSchema: ValidateSchema = {
-    company: {
-      required: {
-        message: '회사를 입력해주세요.',
-      },
-    },
     introduction: {
       required: {
         message: '자기 소개를 입력해주세요.',
@@ -66,11 +58,6 @@ function MentorRegisterForm() {
       minLength: {
         message: '최소 50자 이상 입력해주세요.',
         value: 50,
-      },
-    },
-    jobName: {
-      required: {
-        message: '프로필에 표시될 직무명을 입력해주세요.',
       },
     },
     job: {
@@ -183,19 +170,9 @@ function MentorRegisterForm() {
           <FlexBox direction="column" rowGap="50px">
             <LabelBox
               labelColor={theme.colors.secondary.normal}
-              text="직무경력"
+              text="직무 및 경력"
             >
               <FlexBox direction="column" rowGap="14px">
-                <FormInput
-                  placeholder="회사명을 입력해주세요."
-                  outline
-                  id="company"
-                  name="company"
-                  onChange={handleFormValueChange}
-                  value={form.company}
-                  invalid={isInvalid('company')}
-                  errorMessage={errors?.company}
-                />
                 <FlexBox
                   justifyContent="space-between"
                   columnGap="10px"
@@ -262,38 +239,10 @@ function MentorRegisterForm() {
                       />
                     </FormErrorContainer>
                   </FlexBox>
-
-                  <div>
-                    <Checkbox
-                      label="재직중"
-                      checked={form.inOffice}
-                      setChecked={(value) => {
-                        handleFormValueChange({
-                          name: 'inOffice',
-                          value,
-                        });
-                      }}
-                    />
-                  </div>
                 </FlexBox>
               </FlexBox>
             </LabelBox>
 
-            <LabelBox
-              text="직무명 입력"
-              labelColor={theme.colors.secondary.normal}
-            >
-              <FormInput
-                id="jobName"
-                name="jobName"
-                placeholder="프로필에 표시 될 직무명을 입력해주세요."
-                outline
-                onChange={handleFormValueChange}
-                value={form.jobName}
-                invalid={isInvalid('jobName')}
-                errorMessage={errors?.jobName}
-              />
-            </LabelBox>
             <LabelBox
               text="재직증명서 제출"
               helpText="(선택)"
