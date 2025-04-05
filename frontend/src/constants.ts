@@ -121,7 +121,7 @@ export const PROFILE_MENU = (isUser: boolean) => {
   return [
     {
       name: `${isUser ? '내 프로필' : '프로필 작성하기'}`,
-      href: `${isUser ? '/menteeCenter' : 'profileForm'}`,
+      href: `${isUser ? '/menteeCenter' : '/profileForm'}`,
     },
     {
       name: '비밀번호 수정',
