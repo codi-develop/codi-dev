@@ -45,7 +45,7 @@ function ProfileFormPage() {
   const formData = new FormData();
 
   const { id: memberId } = useSelector(selectUser)!;
-  const { data, isFetching } = useGetProfileQuery();
+  // const { data, isFetching } = useGetProfileQuery();
 
   const initFormValues = {
     nickname: '',
@@ -85,7 +85,7 @@ function ProfileFormPage() {
     validateAll,
     isInvalid,
     setIsFormSubmitted,
-  } = useNewForm(initFormValues, validationSchema, data!);
+  } = useNewForm(initFormValues, validationSchema);
 
   const { file, onUploadFile } = useUploadFile();
   const [openJobSelector, setOpenJobSelector] = useState(false);
@@ -235,7 +235,7 @@ function ProfileFormPage() {
                   }
                   {...{ marginLeft: '10px' }}
                 >
-                  {isEdit && data?.imgUrl ? '수정하기' : '등록하기'}
+                  {/* {isEdit && data?.imgUrl ? '수정하기' : '등록하기'} */}
                 </Button>
               </FlexBox>
             </LabelBox>
