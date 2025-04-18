@@ -52,7 +52,7 @@ function JobSelector({
   }, []);
   useEffect(() => {
     setCategorizedJobs(
-      jobs!.find((_, index) => {
+      jobs?.find((_, index) => {
         return index === selectedTab;
       })?.jobs,
     );

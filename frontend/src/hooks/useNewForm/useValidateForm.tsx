@@ -8,7 +8,7 @@ const useValidateForm = <T extends { [key: string]: any }>(
   validateSchema: ValidateSchema,
 ) => {
   const copied = { ...validateSchema };
-  const { errors, setErrors, isInvalid } = useFormErrors(form);
+  const { errors, setErrors, isInvalid } = useFormErrors();
   const validateAll = () => {
     const results: boolean[] = [];
     Object.keys(copied).forEach((k: string) => {
