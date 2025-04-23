@@ -1,6 +1,8 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import useValidateForm from './useValidateForm';
 import { ValidateSchema } from '@/types/validate';
+import { useDebounce } from 'react-simplikit';
+import useFormElementRefs from './useFormElementRefs';
 
 const useNewForm = <T extends { [key: string]: any }>(
   initialValues: T,
@@ -9,10 +11,13 @@ const useNewForm = <T extends { [key: string]: any }>(
 ) => {
   const [form, setForm] = useState(initialValues);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const { errors, validateAll, validate, isInvalid } = useValidateForm(
-    form,
-    validationSchema!,
-  );
+  const { errors, validateAll, validate, isInvalid, firstErroryKey } =
+    useValidateForm(form, validationSchema!);
+  const debouncedValidation = useDebounce(<T,>(name: string, value: T) => {
+    validate(name!, value);
+  }, 500);
+  const { handleFormElementRef } = useFormElementRefs(errors, firstErroryKey);
+
   /** Form 초기화 */
   const setFormFromServerData = (data: object) => {
     const formValues = { ...form };
@@ -44,7 +49,7 @@ const useNewForm = <T extends { [key: string]: any }>(
     setForm((prev) => ({ ...prev, [name]: value }));
 
     if (isFormSubmitted) {
-      validate(name!, value);
+      debouncedValidation(name!, value);
     }
   };
 
@@ -57,7 +62,9 @@ const useNewForm = <T extends { [key: string]: any }>(
     validateAll,
     isInvalid,
     setIsFormSubmitted,
+    firstErroryKey,
     isFormSubmitted,
+    handleFormElementRef,
   };
 };
 
