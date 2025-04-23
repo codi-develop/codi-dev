@@ -1,7 +1,7 @@
 import { InputProps } from '@/types/ui';
 import Input from '@/ui/atoms/Input';
 import FormErrorContainer from './FormErrorContainer';
-import { InputHTMLAttributes } from 'react';
+import { forwardRef, InputHTMLAttributes } from 'react';
 
 type StyledInputProps = React.DetailedHTMLProps<
   InputHTMLAttributes<HTMLInputElement>,
@@ -14,13 +14,13 @@ interface FormInputProps extends InputFinalProps {
   errorMessage?: string;
 }
 
-const FormInput = (props: FormInputProps) => {
+const FormInput = forwardRef<HTMLInputElement, FormInputProps>((props, ref) => {
   const { errorMessage } = props;
   return (
-    <FormErrorContainer errorMessage={errorMessage!}>
+    <FormErrorContainer ref={ref} errorMessage={errorMessage!}>
       <Input {...props} />
     </FormErrorContainer>
   );
-};
+});
 
 export default FormInput;
