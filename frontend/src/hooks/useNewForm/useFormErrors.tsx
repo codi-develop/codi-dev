@@ -1,17 +1,26 @@
 import { useEffect, useState } from 'react';
 
-interface FormErrors {
+export interface FormErrors {
   [key: string]: string;
 }
 
 const useFormErrors = () => {
   const [errors, setErrors] = useState<FormErrors | null>(null);
+  const firstErroryKey =
+    errors !== null && errors[0] !== null ? Object.keys(errors)[0] : '';
+
+  console.log('first error key', firstErroryKey);
 
   const isInvalid = (key: string) => {
     if (errors) return key in errors!;
     return undefined;
   };
 
-  return { errors, setErrors, isInvalid };
+  return {
+    errors,
+    setErrors,
+    firstErroryKey,
+    isInvalid,
+  };
 };
 export default useFormErrors;
