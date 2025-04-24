@@ -2,7 +2,7 @@
 
 import ProfileImage from '@icons/common/profile-image.svg';
 import Search from '@icons/common/search.svg';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormContainer } from '@/ui/atoms/Container';
@@ -36,8 +36,7 @@ import { ValidateSchema } from '@/types/validate';
 import useNewForm from '@/hooks/useNewForm/useNewForm';
 import FormErrorContainer from '@/ui/molecules/Form/FormErrorContainer';
 import FormInput from '@/ui/molecules/Form/FormInput';
-import FormTextarea from '@/ui/molecules/Form/FormTextarea';
-//test
+
 function ProfileFormPage() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -85,6 +84,7 @@ function ProfileFormPage() {
     validateAll,
     isInvalid,
     setIsFormSubmitted,
+    handleFormElementRef,
   } = useNewForm(initFormValues, validationSchema, data!);
 
   const { file, onUploadFile } = useUploadFile();
@@ -204,6 +204,9 @@ function ProfileFormPage() {
                     width: '100%',
                   },
                 }}
+                ref={(el) => {
+                  handleFormElementRef(el!, 'nickname');
+                }}
                 errorMessage={errors?.nickname}
               />
             </LabelBox>
@@ -243,7 +246,12 @@ function ProfileFormPage() {
               <FlexBox direction="column" rowGap="10px">
                 <FlexBox columnGap="10px">
                   <InvisibleLabel htmlFor="disability" text="장애 분류" />
-                  <FormErrorContainer errorMessage={errors?.disability!}>
+                  <FormErrorContainer
+                    ref={(el) => {
+                      handleFormElementRef(el!, 'disability');
+                    }}
+                    errorMessage={errors?.disability!}
+                  >
                     <Dropdown
                       id="disability"
                       invalid={isInvalid('disability')}
@@ -306,7 +314,10 @@ function ProfileFormPage() {
                 }}
               >
                 <InvisibleLabel htmlFor="job" text="직무 분류" />
-                <FormErrorContainer errorMessage={errors?.job!}>
+                <FormErrorContainer
+                  ref={(el) => handleFormElementRef(el!, 'desiredJob')}
+                  errorMessage={errors?.job!}
+                >
                   <JobSelector
                     id="job"
                     invalid={isInvalid('job')}
@@ -328,7 +339,12 @@ function ProfileFormPage() {
 
             <LabelBox text="취업 상태">
               <InvisibleLabel htmlFor="employmentStatus" text="취업 상태" />
-              <FormErrorContainer errorMessage={errors?.employmentStatus!}>
+              <FormErrorContainer
+                ref={(el) => {
+                  handleFormElementRef(el!, 'employmentStatus');
+                }}
+                errorMessage={errors?.employmentStatus!}
+              >
                 <Dropdown
                   id="employmentStatus"
                   width="40%"
