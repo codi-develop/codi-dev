@@ -7,7 +7,7 @@ import useFormElementRefs from './useFormElementRefs';
 const useNewForm = <T extends { [key: string]: any }>(
   initialValues: T,
   validationSchema?: ValidateSchema,
-  serverData?: object,
+  externalValues?: object,
 ) => {
   const [form, setForm] = useState(initialValues);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
@@ -19,7 +19,7 @@ const useNewForm = <T extends { [key: string]: any }>(
   const { handleFormElementRef } = useFormElementRefs(errors, firstErroryKey);
 
   /** Form 초기화 */
-  const setFormFromServerData = (data: object) => {
+  const loadFormValuesFromExternal = (data: object) => {
     const formValues = { ...form };
     Object.keys(data).forEach((key) => {
       if (Object.hasOwn(form, key)) {
@@ -32,10 +32,10 @@ const useNewForm = <T extends { [key: string]: any }>(
     return formValues;
   };
   useEffect(() => {
-    if (serverData) {
-      setForm(setFormFromServerData(serverData!));
+    if (externalValues) {
+      setForm(loadFormValuesFromExternal(externalValues!));
     }
-  }, [serverData]);
+  }, [externalValues]);
 
   /** form value handler */
   const handleFormValueChange = <T,>(
