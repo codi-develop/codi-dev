@@ -1,9 +1,17 @@
-import { ValidateSchemaValue } from '@/types/validate';
+import {
+  ValidateFunction,
+  ValidateInfoValue,
+  ValidateSchemaValue,
+} from '@/types/validate';
+import { isNumber, isRegExp, isString } from '@/utils/typeGuards';
 
 export const invalid = <T>(value: T, validateInfo: ValidateSchemaValue) => {
   const v = validate(value);
   const { required, min, max, minLength, regex } = validateInfo;
-  let errorMessage = null;
+
+  Object.keys(validateInfo).forEach((key) => {
+    const validate = validateInfo[key as keyof ValidateSchemaValue];
+  });
 
   if (required) {
     if (!v.isRequired()) {
@@ -38,17 +46,40 @@ export const invalid = <T>(value: T, validateInfo: ValidateSchemaValue) => {
   return null;
 };
 
-export const validate = <T>(value: T) => {
+export const validate = <T>(value: T): { [key: string]: ValidateFunction } => {
   return {
     isRequired: () =>
       value !== null &&
       value !== undefined &&
       ((typeof value === 'string' && value !== '') ||
         (Array.isArray(value) && value.length > 0)),
-    isRegexCorrect: (regex: RegExp) => new RegExp(regex!).test(value as string),
-    isMin: (min: number) => Number(value) > Number(min)!,
-    isMax: (max: number) => typeof value === 'number' && value < max!,
-    isMinLength: (minLength: number) =>
-      typeof value === 'string' && value.length > minLength,
+    isRegexCorrect: (regex: ValidateInfoValue) => {
+      if (!isString(value)) {
+        return false;
+      }
+      if (isRegExp(regex)) {
+        return regex.test(value);
+      }
+      return false;
+    },
+    isMin: (min: ValidateInfoValue) => {
+      if (isNumber(value) && isNumber(min)) {
+        return value > min;
+      }
+
+      return false;
+    },
+    isMax: (max: ValidateInfoValue) => {
+      if (isNumber(value) && isNumber(max)) {
+        return value < max;
+      }
+      return false;
+    },
+    isMinLength: (minLength: ValidateInfoValue) => {
+      if (isNumber(minLength) && isString(value)) {
+        return value.length > minLength;
+      }
+      return false;
+    },
   };
 };
