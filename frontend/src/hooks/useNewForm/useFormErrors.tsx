@@ -9,8 +9,6 @@ const useFormErrors = () => {
   const firstErroryKey =
     errors !== null && errors[0] !== null ? Object.keys(errors)[0] : '';
 
-  console.log('first error key', firstErroryKey);
-
   const isInvalid = (key: string) => {
     if (errors) return key in errors!;
     return undefined;

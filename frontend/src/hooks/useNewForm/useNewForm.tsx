@@ -4,10 +4,12 @@ import { ValidateSchema } from '@/types/validate';
 import { useDebounce } from 'react-simplikit';
 import useFormElementRefs from './useFormElementRefs';
 
-const useNewForm = <T extends { [key: string]: any }>(
+type ExternalValues<T> = T & { [key: string]: any };
+
+const useNewForm = <T extends object>(
   initialValues: T,
   validationSchema?: ValidateSchema,
-  externalValues?: object,
+  externalValues?: ExternalValues<T>,
 ) => {
   const [form, setForm] = useState(initialValues);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
@@ -19,21 +21,22 @@ const useNewForm = <T extends { [key: string]: any }>(
   const { handleFormElementRef } = useFormElementRefs(errors, firstErroryKey);
 
   /** Form 초기화 */
-  const loadFormValuesFromExternal = (data: object) => {
-    const formValues = { ...form };
-    Object.keys(data).forEach((key) => {
-      if (Object.hasOwn(form, key)) {
-        Object.assign(formValues, {
-          ...formValues,
-          [key]: data[key as keyof typeof data],
-        });
+  const loadFormValuesFromExternal = (externalValues: ExternalValues<T>): T => {
+    let newForm = { ...form };
+    Object.keys(externalValues).forEach((key) => {
+      if (key in newForm) {
+        newForm = {
+          ...newForm,
+          [key]: externalValues[key as keyof typeof externalValues],
+        };
       }
     });
-    return formValues;
+    return newForm;
   };
+
   useEffect(() => {
     if (externalValues) {
-      setForm(loadFormValuesFromExternal(externalValues!));
+      setForm(loadFormValuesFromExternal(externalValues));
     }
   }, [externalValues]);
 
