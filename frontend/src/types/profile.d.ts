@@ -12,17 +12,17 @@ export interface MenteeProfile {
   favorites?: [];
 }
 export interface Mentor extends MenteeProfile {
-  id?:number,
+  id?: number;
   mentorId?: number;
   career?: string;
-  job?:string;
-  introduction?:string;
+  job?: string;
+  introduction?: string;
   star?: number;
   mentees?: number;
   applicationDate?: string;
   mentoringCategories?: string[];
-  mentoringCount?:number;
-  responseRate?:number;
+  mentoringCount?: number;
+  responseRate?: number;
   futureScheduleCount?: number;
 }
 

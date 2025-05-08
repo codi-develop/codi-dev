@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useFormErrors from './useFormErrors';
 import { invalid } from './validate';
 import { ValidateSchema, ValidateSchemaValue } from '@/types/validate';
@@ -7,6 +7,7 @@ const useValidateForm = <T extends { [key: string]: any }>(
   form: T,
   validateSchema: ValidateSchema,
 ) => {
+  const [isValid, setIsValid] = useState<boolean>(false);
   const copied = { ...validateSchema };
   const { errors, setErrors, isInvalid, firstErroryKey } = useFormErrors();
   const validateAll = () => {
@@ -24,11 +25,10 @@ const useValidateForm = <T extends { [key: string]: any }>(
   };
 
   const validate = (k: string, value: any) => {
-    const schema = validateSchema[k];
-    const errorMessage = invalid(value, schema as ValidateSchemaValue);
+    const errorMessage = invalid(value, validateSchema[k]);
 
     if (errorMessage) {
-      setErrors((prev) => ({ ...prev!, [k as string]: errorMessage! }));
+      setErrors((prev) => ({ ...prev!, [k]: errorMessage! }));
 
       return false;
     }
