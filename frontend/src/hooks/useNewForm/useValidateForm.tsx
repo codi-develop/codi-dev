@@ -10,15 +10,15 @@ const useValidateForm = <T extends { [key: string]: any }>(
   const [isValid, setIsValid] = useState<boolean>(false);
   const copied = { ...validateSchema };
   const { errors, setErrors, isInvalid, firstErroryKey } = useFormErrors();
-  const validateAll = () => {
-    const results: boolean[] = [];
-    Object.keys(copied).forEach((k: string) => {
-      const result = validate(k, form[k]);
-      results.push(result);
-    });
+  const validateAllFormValues = () => {
+    const validateSchemaKeys = Object.keys(copied);
 
-    if (results.some((r) => !r)) {
-      return false;
+    for (let i = 0; i < validateSchemaKeys.length; i++) {
+      const key = validateSchemaKeys[i];
+      const value = form[key];
+      if (!validate(key, value)) {
+        return false;
+      }
     }
 
     return true;
@@ -44,7 +44,7 @@ const useValidateForm = <T extends { [key: string]: any }>(
 
   return {
     validate,
-    validateAll,
+    validateAllFormValues,
     errors,
     isInvalid,
     firstErroryKey,
