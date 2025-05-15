@@ -40,8 +40,13 @@ function FindPwPage() {
     },
   };
 
-  const { form, handleFormValueChange, validateAll, isInvalid, errors } =
-    useNewForm(initialFormValues, validationSchema);
+  const {
+    form,
+    handleFormValueChange,
+    validateAllFormValues,
+    isInvalid,
+    errors,
+  } = useNewForm(initialFormValues, validationSchema);
   const postFindPw = async () => {
     const { data, status } = await findPassword(form.email, form.id);
 
@@ -57,7 +62,7 @@ function FindPwPage() {
   const handleSubmitFindPwForm = async (e: FormEvent) => {
     e.preventDefault();
 
-    const isFormValid = validateAll();
+    const isFormValid = validateAllFormValues();
 
     if (isFormValid) await postFindPw();
   };

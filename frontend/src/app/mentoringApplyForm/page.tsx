@@ -58,7 +58,7 @@ function MentoringApplyFormPage() {
   const {
     form,
     handleFormValueChange,
-    validateAll,
+    validateAllFormValues,
     setIsFormSubmitted,
     isInvalid,
     errors,
@@ -95,7 +95,7 @@ function MentoringApplyFormPage() {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const isValid = validateAll();
+    const isValid = validateAllFormValues();
     setIsFormSubmitted(true);
 
     if (isValid) {

@@ -42,7 +42,7 @@ function FindIdPage() {
     form,
     errors,
     handleFormValueChange,
-    validateAll,
+    validateAllFormValues,
     isInvalid,
     setIsFormSubmitted,
   } = useNewForm(initialFormValues, validationSchema);
@@ -62,7 +62,7 @@ function FindIdPage() {
   const handleSubmitFindIdForm = async (e: FormEvent) => {
     e.preventDefault();
     setIsFormSubmitted(true);
-    const isFormValid = validateAll();
+    const isFormValid = validateAllFormValues();
 
     if (isFormValid) await postFindId();
   };

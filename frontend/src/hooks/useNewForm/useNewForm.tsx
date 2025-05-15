@@ -13,7 +13,7 @@ const useNewForm = <T extends object>(
 ) => {
   const [form, setForm] = useState(initialValues);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const { errors, validateAll, validate, isInvalid, firstErroryKey } =
+  const { errors, validateAllFormValues, validate, isInvalid, firstErroryKey } =
     useValidateForm(form, validationSchema!);
   const debouncedValidation = useDebounce(<T,>(name: string, value: T) => {
     validate(name!, value);
@@ -62,7 +62,7 @@ const useNewForm = <T extends object>(
     handleFormValueChange,
     errors,
     validate,
-    validateAll,
+    validateAllFormValues,
     isInvalid,
     setIsFormSubmitted,
     firstErroryKey,

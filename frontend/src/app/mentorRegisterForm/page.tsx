@@ -84,7 +84,7 @@ function MentorRegisterForm() {
   const {
     form,
     handleFormValueChange,
-    validateAll,
+    validateAllFormValues,
     isInvalid,
     errors,
     setIsFormSubmitted,
@@ -113,7 +113,7 @@ function MentorRegisterForm() {
   const handleMentorProfileSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsFormSubmitted(true);
-    const isFormValid = validateAll();
+    const isFormValid = validateAllFormValues();
 
     if (isFormValid) {
       processData();

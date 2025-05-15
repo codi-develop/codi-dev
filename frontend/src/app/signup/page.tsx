@@ -74,7 +74,7 @@ function SignUpPage() {
     form,
     handleFormValueChange,
     validate,
-    validateAll,
+    validateAllFormValues,
     isInvalid,
     errors,
     setIsFormSubmitted,
@@ -105,7 +105,7 @@ function SignUpPage() {
     setIsFormSubmitted(true);
     e.preventDefault();
 
-    const isValid = validateAll();
+    const isValid = validateAllFormValues();
 
     if (!checkUserTerm || !checkPrivateDataTerm) {
       return;
