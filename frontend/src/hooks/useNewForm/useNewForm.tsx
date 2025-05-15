@@ -38,7 +38,7 @@ const useNewForm = <T extends object>(
     if (externalValues) {
       setForm(loadFormValuesFromExternal(externalValues));
     }
-  }, [externalValues]);
+  }, []);
 
   /** form value handler */
   const handleFormValueChange = <T,>(
