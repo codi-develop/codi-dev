@@ -24,18 +24,18 @@ const useValidateForm = <T extends { [key: string]: any }>(
     return true;
   };
 
-  const validate = (k: string, value: any) => {
-    const errorMessage = invalid(value, validateSchema[k]);
+  const validate = (key: string, value: any) => {
+    const errorMessage = invalid(value, validateSchema[key]);
 
     if (errorMessage) {
-      setErrors((prev) => ({ ...prev!, [k]: errorMessage! }));
+      setErrors((prev) => ({ ...prev!, [key]: errorMessage! }));
 
       return false;
     }
 
     setErrors((prev) => {
       const copied = { ...prev };
-      delete copied[k];
+      delete copied[key];
       return copied;
     });
 
