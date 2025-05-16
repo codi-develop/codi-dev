@@ -10,16 +10,10 @@ const useValidateForm = <T extends { [key: string]: any }>(
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const { errors, updateError, deleteError, isInvalid, firstErroryKey } =
     useFormErrors();
-  const validateAllFormValues = () => {
-    for (const validateInfo of Object.entries(validateSchema)) {
-      const [key, value] = validateInfo;
-      if (invalid(value, validateSchema[key])) {
-        setIsFormValid(false);
-        return false;
-      }
 
-      setIsFormValid(true);
-      return true;
+  const validateAllFormValues = () => {
+    for (const key of Object.keys(validateSchema)) {
+      validate(key, form[key]);
     }
   };
 
@@ -34,7 +28,12 @@ const useValidateForm = <T extends { [key: string]: any }>(
     deleteError(key);
   };
 
+  useEffect(() => {
+    setIsFormValid(Object.keys(errors).length === 0);
+  }, [errors]);
+
   return {
+    isFormValid,
     validate,
     validateAllFormValues,
     errors,

@@ -5,7 +5,7 @@ export interface FormErrors {
 }
 
 const useFormErrors = () => {
-  const [errors, setErrors] = useState<FormErrors | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
   const firstErroryKey =
     errors !== null && errors[0] !== null ? Object.keys(errors)[0] : '';
 

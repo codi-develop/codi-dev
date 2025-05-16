@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, use, useEffect, useState } from 'react';
 import useValidateForm from './useValidateForm';
 import { ValidateSchema } from '@/types/validate';
 import { useDebounce } from 'react-simplikit';
@@ -13,14 +13,19 @@ const useNewForm = <T extends object>(
 ) => {
   const [form, setForm] = useState(initialValues);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const { errors, validateAllFormValues, validate, isInvalid, firstErroryKey } =
-    useValidateForm(form, validationSchema!);
+  const {
+    errors,
+    validateAllFormValues,
+    validate,
+    isInvalid,
+    isFormValid,
+    firstErroryKey,
+  } = useValidateForm(form, validationSchema!);
   const debouncedValidation = useDebounce(<T,>(name: string, value: T) => {
     validate(name!, value);
   }, 500);
   const { handleFormElementRef } = useFormElementRefs(errors, firstErroryKey);
 
-  /** Form 초기화 */
   const loadFormValuesFromExternal = (externalValues: ExternalValues<T>): T => {
     let newForm = { ...form };
     Object.keys(externalValues).forEach((key) => {
@@ -34,13 +39,6 @@ const useNewForm = <T extends object>(
     return newForm;
   };
 
-  useEffect(() => {
-    if (externalValues) {
-      setForm(loadFormValuesFromExternal(externalValues));
-    }
-  }, []);
-
-  /** form value handler */
   const handleFormValueChange = <T,>(
     e:
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,6 +54,30 @@ const useNewForm = <T extends object>(
     }
   };
 
+  useEffect(() => {
+    if (externalValues) {
+      setForm(loadFormValuesFromExternal(externalValues));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isFormSubmitted) {
+      validateAllFormValues();
+    }
+  }, [isFormSubmitted]);
+
+  useEffect(() => {
+    const handleSubmitEvent = (e: Event) => {
+      if (e.target instanceof HTMLFormElement) {
+        setIsFormSubmitted(true);
+      }
+    };
+    window.addEventListener('submit', handleSubmitEvent);
+    return () => {
+      window.removeEventListener('submit', handleSubmitEvent);
+    };
+  }, []);
+
   return {
     form,
     setForm,
@@ -68,6 +90,7 @@ const useNewForm = <T extends object>(
     firstErroryKey,
     isFormSubmitted,
     handleFormElementRef,
+    isFormValid,
   };
 };
 
