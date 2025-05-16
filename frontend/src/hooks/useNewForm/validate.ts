@@ -9,10 +9,6 @@ export const invalid = <T>(value: T, validateInfo: ValidateSchemaValue) => {
   const v = validate(value);
   const { required, min, max, minLength, regex } = validateInfo;
 
-  Object.keys(validateInfo).forEach((key) => {
-    const validate = validateInfo[key as keyof ValidateSchemaValue];
-  });
-
   if (required) {
     if (!v.isRequired()) {
       return required.message;

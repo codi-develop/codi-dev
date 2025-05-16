@@ -14,11 +14,24 @@ const useFormErrors = () => {
     return false;
   };
 
+  const updateError = (key: string, errorMessage: string) => {
+    setErrors((prev) => ({ ...prev!, [key]: errorMessage! }));
+  };
+
+  const deleteError = (key: string) => {
+    setErrors((prev) => {
+      const copied = { ...prev };
+      delete copied[key];
+      return copied;
+    });
+  };
+
   return {
     errors,
-    setErrors,
     firstErroryKey,
     isInvalid,
+    updateError,
+    deleteError,
   };
 };
 export default useFormErrors;
